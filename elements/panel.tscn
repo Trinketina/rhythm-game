@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://ui3ruekfmf6i"]
+
+[node name="Panel" type="Panel"]
+
+[node name="RichTextLabel" type="RichTextLabel" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+text = "test"
