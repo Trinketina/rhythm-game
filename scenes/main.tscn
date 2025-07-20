@@ -1,33 +1,326 @@
-[gd_scene load_steps=3 format=3 uid="uid://dkgv8e08fxv1l"]
+[gd_scene load_steps=16 format=3 uid="uid://dkgv8e08fxv1l"]
 
-[ext_resource type="Script" uid="uid://d1anseknfj0e" path="res://scripts/arrow_keys.gd" id="1_0wfyh"]
+[ext_resource type="Script" uid="uid://csv58cfy2u63q" path="res://scripts/Input.cs" id="1_tipki"]
 [ext_resource type="Texture2D" uid="uid://c32t65rydv88j" path="res://sprites/empty_arrow.png" id="2_0wfyh"]
+[ext_resource type="PackedScene" uid="uid://detehmyjkaqwv" path="res://scenes/arrow_hit.tscn" id="2_tbgi4"]
+[ext_resource type="Script" uid="uid://dkins5ejiwq3n" path="res://scripts/Beat.cs" id="6_choun"]
+[ext_resource type="Texture2D" uid="uid://ybas1ci0jymj" path="res://sprites/down_arrow.png" id="7_choun"]
+[ext_resource type="Texture2D" uid="uid://2kddoplcgss4" path="res://sprites/left_arrow.png" id="8_ya4ey"]
+[ext_resource type="Texture2D" uid="uid://wnce1id37nvw" path="res://sprites/right_arrow.png" id="9_eb6dy"]
+[ext_resource type="Texture2D" uid="uid://cih2vx0ngvdxt" path="res://sprites/up_arrow.png" id="10_trceg"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_tbgi4"]
+size = Vector2(300, 8)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_tefeu"]
+size = Vector2(300, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_o6xl0"]
+size = Vector2(300, 24)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_tipki"]
+size = Vector2(300, 40)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_choun"]
+size = Vector2(200, 10)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_85g3d"]
+size = Vector2(200, 10)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ya4ey"]
+size = Vector2(200, 10)
 
 [node name="main" type="Node2D"]
 
-[node name="Node2D" type="Node2D" parent="." node_paths=PackedStringArray("arrow_up", "arrow_down", "arrow_left", "arrow_right")]
+[node name="TextEdit" type="TextEdit" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 437.0
+offset_top = 225.0
+offset_right = 741.0
+offset_bottom = 347.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 86
+text = "test"
+
+[node name="Arrow Input" type="Node2D" parent="." node_paths=PackedStringArray("arrow_up", "arrow_left", "arrow_right", "arrow_down")]
+position = Vector2(370, 544)
 scale = Vector2(2.5, 2.5)
-script = ExtResource("1_0wfyh")
+script = ExtResource("1_tipki")
 arrow_up = NodePath("arrow_up")
-arrow_down = NodePath("arrow_down")
 arrow_left = NodePath("arrow_left")
 arrow_right = NodePath("arrow_right")
+arrow_down = NodePath("arrow_down")
 
-[node name="arrow_up" type="Sprite2D" parent="Node2D"]
-position = Vector2(164, 189.2)
-texture = ExtResource("2_0wfyh")
+[node name="arrow_up" parent="Arrow Input" instance=ExtResource("2_tbgi4")]
 
-[node name="arrow_right" type="Sprite2D" parent="Node2D"]
-position = Vector2(279.2, 189.2)
-rotation = 1.5708
-texture = ExtResource("2_0wfyh")
-
-[node name="arrow_left" type="Sprite2D" parent="Node2D"]
-position = Vector2(237.6, 189.2)
+[node name="arrow_left" type="Sprite2D" parent="Arrow Input"]
+position = Vector2(50, 0)
 rotation = -1.5708
 texture = ExtResource("2_0wfyh")
 
-[node name="arrow_down" type="Sprite2D" parent="Node2D"]
-position = Vector2(199.2, 189.2)
+[node name="arrow_right" type="Sprite2D" parent="Arrow Input"]
+position = Vector2(100, 0)
+rotation = 1.5708
+texture = ExtResource("2_0wfyh")
+
+[node name="arrow_down" type="Sprite2D" parent="Arrow Input"]
+position = Vector2(150, 0)
 rotation = 3.14159
 texture = ExtResource("2_0wfyh")
+
+[node name="Node" type="Node2D" parent="Arrow Input"]
+position = Vector2(63.6, 2.44141e-05)
+scale = Vector2(0.4, 0.4)
+
+[node name="perfect" type="Area2D" parent="Arrow Input/Node"]
+scale = Vector2(2.5, 2.5)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Arrow Input/Node/perfect"]
+shape = SubResource("RectangleShape2D_tbgi4")
+
+[node name="good" type="Area2D" parent="Arrow Input/Node"]
+scale = Vector2(2.5, 2.5)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Arrow Input/Node/good"]
+shape = SubResource("RectangleShape2D_tefeu")
+
+[node name="okay" type="Area2D" parent="Arrow Input/Node"]
+scale = Vector2(2.5, 2.5)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Arrow Input/Node/okay"]
+shape = SubResource("RectangleShape2D_o6xl0")
+
+[node name="miss" type="Area2D" parent="Arrow Input/Node"]
+scale = Vector2(2.5, 2.5)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Arrow Input/Node/miss"]
+position = Vector2(0, -3.19998)
+shape = SubResource("RectangleShape2D_tipki")
+
+[node name="beat" type="Node2D" parent="." node_paths=PackedStringArray("text", "note_symbols", "collider")]
+position = Vector2(370, -96.9999)
+scale = Vector2(2.5, 2.5)
+script = ExtResource("6_choun")
+text = NodePath("../TextEdit")
+note_symbols = [NodePath("UpArrow"), NodePath("LeftArrow"), NodePath("RightArrow"), NodePath("DownArrow")]
+collider = NodePath("Area2D")
+temp_indexes = PackedInt32Array(0, 3)
+
+[node name="UpArrow" type="Sprite2D" parent="beat"]
+visible = false
+texture = ExtResource("10_trceg")
+
+[node name="LeftArrow" type="Sprite2D" parent="beat"]
+visible = false
+position = Vector2(50, 0)
+rotation = -1.5708
+texture = ExtResource("8_ya4ey")
+
+[node name="RightArrow" type="Sprite2D" parent="beat"]
+visible = false
+position = Vector2(100, 0)
+rotation = 1.5708
+texture = ExtResource("9_eb6dy")
+
+[node name="DownArrow" type="Sprite2D" parent="beat"]
+visible = false
+position = Vector2(150, 0)
+rotation = -3.14159
+texture = ExtResource("7_choun")
+
+[node name="Area2D" type="Area2D" parent="beat"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="beat/Area2D"]
+position = Vector2(75, 0)
+shape = SubResource("RectangleShape2D_choun")
+
+[node name="beat2" type="Node2D" parent="." node_paths=PackedStringArray("text", "note_symbols", "collider")]
+position = Vector2(370, -235)
+scale = Vector2(2.5, 2.5)
+script = ExtResource("6_choun")
+text = NodePath("../TextEdit")
+note_symbols = [NodePath("UpArrow"), NodePath("LeftArrow"), NodePath("RightArrow"), NodePath("DownArrow")]
+collider = NodePath("Area2D")
+temp_indexes = PackedInt32Array(1, 2)
+
+[node name="UpArrow" type="Sprite2D" parent="beat2"]
+visible = false
+texture = ExtResource("10_trceg")
+
+[node name="LeftArrow" type="Sprite2D" parent="beat2"]
+visible = false
+position = Vector2(50, 0)
+rotation = -1.5708
+texture = ExtResource("8_ya4ey")
+
+[node name="RightArrow" type="Sprite2D" parent="beat2"]
+visible = false
+position = Vector2(100, 0)
+rotation = 1.5708
+texture = ExtResource("9_eb6dy")
+
+[node name="DownArrow" type="Sprite2D" parent="beat2"]
+visible = false
+position = Vector2(150, 0)
+rotation = -3.14159
+texture = ExtResource("7_choun")
+
+[node name="Area2D" type="Area2D" parent="beat2"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="beat2/Area2D"]
+position = Vector2(75, 0)
+shape = SubResource("RectangleShape2D_85g3d")
+
+[node name="beat3" type="Node2D" parent="." node_paths=PackedStringArray("text", "note_symbols", "collider")]
+position = Vector2(370, -358)
+scale = Vector2(2.5, 2.5)
+script = ExtResource("6_choun")
+text = NodePath("../TextEdit")
+note_symbols = [NodePath("UpArrow"), NodePath("LeftArrow"), NodePath("RightArrow"), NodePath("DownArrow")]
+collider = NodePath("Area2D")
+temp_indexes = PackedInt32Array(0)
+
+[node name="UpArrow" type="Sprite2D" parent="beat3"]
+visible = false
+texture = ExtResource("10_trceg")
+
+[node name="LeftArrow" type="Sprite2D" parent="beat3"]
+visible = false
+position = Vector2(50, 0)
+rotation = -1.5708
+texture = ExtResource("8_ya4ey")
+
+[node name="RightArrow" type="Sprite2D" parent="beat3"]
+visible = false
+position = Vector2(100, 0)
+rotation = 1.5708
+texture = ExtResource("9_eb6dy")
+
+[node name="DownArrow" type="Sprite2D" parent="beat3"]
+visible = false
+position = Vector2(150, 0)
+rotation = -3.14159
+texture = ExtResource("7_choun")
+
+[node name="Area2D" type="Area2D" parent="beat3"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="beat3/Area2D"]
+position = Vector2(75, 0)
+shape = SubResource("RectangleShape2D_ya4ey")
+
+[node name="beat4" type="Node2D" parent="." node_paths=PackedStringArray("text", "note_symbols", "collider")]
+position = Vector2(370, -481)
+scale = Vector2(2.5, 2.5)
+script = ExtResource("6_choun")
+text = NodePath("../TextEdit")
+note_symbols = [NodePath("UpArrow"), NodePath("LeftArrow"), NodePath("RightArrow"), NodePath("DownArrow")]
+collider = NodePath("Area2D")
+temp_indexes = PackedInt32Array(1)
+
+[node name="UpArrow" type="Sprite2D" parent="beat4"]
+visible = false
+texture = ExtResource("10_trceg")
+
+[node name="LeftArrow" type="Sprite2D" parent="beat4"]
+visible = false
+position = Vector2(50, 0)
+rotation = -1.5708
+texture = ExtResource("8_ya4ey")
+
+[node name="RightArrow" type="Sprite2D" parent="beat4"]
+visible = false
+position = Vector2(100, 0)
+rotation = 1.5708
+texture = ExtResource("9_eb6dy")
+
+[node name="DownArrow" type="Sprite2D" parent="beat4"]
+visible = false
+position = Vector2(150, 0)
+rotation = -3.14159
+texture = ExtResource("7_choun")
+
+[node name="Area2D" type="Area2D" parent="beat4"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="beat4/Area2D"]
+position = Vector2(75, 0)
+shape = SubResource("RectangleShape2D_ya4ey")
+
+[node name="beat5" type="Node2D" parent="." node_paths=PackedStringArray("text", "note_symbols", "collider")]
+position = Vector2(370, -596)
+scale = Vector2(2.5, 2.5)
+script = ExtResource("6_choun")
+text = NodePath("../TextEdit")
+note_symbols = [NodePath("UpArrow"), NodePath("LeftArrow"), NodePath("RightArrow"), NodePath("DownArrow")]
+collider = NodePath("Area2D")
+temp_indexes = PackedInt32Array(2)
+
+[node name="UpArrow" type="Sprite2D" parent="beat5"]
+visible = false
+texture = ExtResource("10_trceg")
+
+[node name="LeftArrow" type="Sprite2D" parent="beat5"]
+visible = false
+position = Vector2(50, 0)
+rotation = -1.5708
+texture = ExtResource("8_ya4ey")
+
+[node name="RightArrow" type="Sprite2D" parent="beat5"]
+visible = false
+position = Vector2(100, 0)
+rotation = 1.5708
+texture = ExtResource("9_eb6dy")
+
+[node name="DownArrow" type="Sprite2D" parent="beat5"]
+visible = false
+position = Vector2(150, 0)
+rotation = -3.14159
+texture = ExtResource("7_choun")
+
+[node name="Area2D" type="Area2D" parent="beat5"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="beat5/Area2D"]
+position = Vector2(75, 0)
+shape = SubResource("RectangleShape2D_ya4ey")
+
+[node name="beat6" type="Node2D" parent="." node_paths=PackedStringArray("text", "note_symbols", "collider")]
+position = Vector2(370, -713)
+scale = Vector2(2.5, 2.5)
+script = ExtResource("6_choun")
+text = NodePath("../TextEdit")
+note_symbols = [NodePath("UpArrow"), NodePath("LeftArrow"), NodePath("RightArrow"), NodePath("DownArrow")]
+collider = NodePath("Area2D")
+temp_indexes = PackedInt32Array(3)
+
+[node name="UpArrow" type="Sprite2D" parent="beat6"]
+visible = false
+texture = ExtResource("10_trceg")
+
+[node name="LeftArrow" type="Sprite2D" parent="beat6"]
+visible = false
+position = Vector2(50, 0)
+rotation = -1.5708
+texture = ExtResource("8_ya4ey")
+
+[node name="RightArrow" type="Sprite2D" parent="beat6"]
+visible = false
+position = Vector2(100, 0)
+rotation = 1.5708
+texture = ExtResource("9_eb6dy")
+
+[node name="DownArrow" type="Sprite2D" parent="beat6"]
+visible = false
+position = Vector2(150, 0)
+rotation = -3.14159
+texture = ExtResource("7_choun")
+
+[node name="Area2D" type="Area2D" parent="beat6"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="beat6/Area2D"]
+position = Vector2(75, 0)
+shape = SubResource("RectangleShape2D_ya4ey")

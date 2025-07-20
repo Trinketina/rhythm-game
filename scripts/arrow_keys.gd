@@ -1,11 +1,13 @@
 extends Node
 
+@export var note_resource: Resource
+
 @export var arrow_up: Sprite2D
 @export var arrow_down: Sprite2D
 @export var arrow_left: Sprite2D
 @export var arrow_right: Sprite2D
 
-func _unhandled_input(event: InputEvent):
+func _input(event: InputEvent):
 	if event.is_action_pressed("arrow-up"):
 		scale_button(arrow_up)
 	elif event.is_action_pressed("arrow-down"):
@@ -15,6 +17,9 @@ func _unhandled_input(event: InputEvent):
 	elif event.is_action_pressed("arrow-right"):
 		scale_button(arrow_right)
 	
+func test():
+	print_debug("works?")
+	pass
 func scale_button(arrow_key: Sprite2D):
 	arrow_key.scale = Vector2.ONE * 3
 	var time = 0.0

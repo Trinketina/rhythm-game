@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "Godot": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Users\\krist\\Documents\\Tools\\Godot\\Godot_v4.4.1-stable_mono_win64.exe",
+      "workingDirectory": "."
+    }
+  }
+}
