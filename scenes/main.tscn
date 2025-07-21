@@ -1,9 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://dkgv8e08fxv1l"]
-
-[ext_resource type="PackedScene" uid="uid://bi2e8a13wmmvj" path="res://scenes/rhythm_ui.tscn" id="9_85g3d"]
-
-[node name="main" type="Node2D"]
-
-[node name="RhythmUI" parent="." instance=ExtResource("9_85g3d")]
-size_flags_horizontal = 3
-size_flags_vertical = 3

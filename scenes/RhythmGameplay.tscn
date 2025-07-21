@@ -1,11 +1,11 @@
 [gd_scene load_steps=11 format=3 uid="uid://bi2e8a13wmmvj"]
 
-[ext_resource type="Texture2D" uid="uid://c32t65rydv88j" path="res://sprites/empty_arrow.png" id="1_6krc6"]
-[ext_resource type="Script" uid="uid://csv58cfy2u63q" path="res://scripts/Input.cs" id="1_fyou1"]
-[ext_resource type="Script" uid="uid://teev7iq6w8h1" path="res://scenes/TempLabel.cs" id="1_y4w8d"]
-[ext_resource type="PackedScene" uid="uid://detehmyjkaqwv" path="res://scenes/arrow_hit.tscn" id="2_t3k1t"]
-[ext_resource type="Script" uid="uid://d0s4fav4lq1ox" path="res://scripts/BeatSpawner.cs" id="4_fyou1"]
-[ext_resource type="PackedScene" uid="uid://cuyu2sio30wba" path="res://scenes/beat.tscn" id="5_t3k1t"]
+[ext_resource type="Script" uid="uid://csv58cfy2u63q" path="res://scripts/Input.cs" id="1_ktx6y"]
+[ext_resource type="PackedScene" uid="uid://detehmyjkaqwv" path="res://scenes/arrow_hit.tscn" id="2_ld010"]
+[ext_resource type="Texture2D" uid="uid://c32t65rydv88j" path="res://sprites/empty_arrow.png" id="3_et5t5"]
+[ext_resource type="Script" uid="uid://d0s4fav4lq1ox" path="res://scripts/BeatSpawner.cs" id="4_rax66"]
+[ext_resource type="PackedScene" uid="uid://cuyu2sio30wba" path="res://scenes/beat.tscn" id="5_qcsyk"]
+[ext_resource type="Script" uid="uid://teev7iq6w8h1" path="res://scripts/TempLabel.cs" id="6_ohwo4"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_y4w8d"]
 size = Vector2(300, 8)
@@ -40,29 +40,29 @@ grow_vertical = 0
 [node name="Arrow Input" type="Node2D" parent="Arrows" node_paths=PackedStringArray("arrow_up", "arrow_left", "arrow_right", "arrow_down")]
 position = Vector2(-3.05176e-05, -85)
 scale = Vector2(2.5, 2.5)
-script = ExtResource("1_fyou1")
+script = ExtResource("1_ktx6y")
 arrow_up = NodePath("arrow_up")
 arrow_left = NodePath("arrow_left")
 arrow_right = NodePath("arrow_right")
 arrow_down = NodePath("arrow_down")
 
-[node name="arrow_up" parent="Arrows/Arrow Input" instance=ExtResource("2_t3k1t")]
+[node name="arrow_up" parent="Arrows/Arrow Input" instance=ExtResource("2_ld010")]
 position = Vector2(-60, 0)
 
 [node name="arrow_left" type="Sprite2D" parent="Arrows/Arrow Input"]
 position = Vector2(-20, 0)
 rotation = -1.5708
-texture = ExtResource("1_6krc6")
+texture = ExtResource("3_et5t5")
 
 [node name="arrow_right" type="Sprite2D" parent="Arrows/Arrow Input"]
 position = Vector2(20, 0)
 rotation = 1.5708
-texture = ExtResource("1_6krc6")
+texture = ExtResource("3_et5t5")
 
 [node name="arrow_down" type="Sprite2D" parent="Arrows/Arrow Input"]
 position = Vector2(60, 0)
 rotation = 3.14159
-texture = ExtResource("1_6krc6")
+texture = ExtResource("3_et5t5")
 
 [node name="Node" type="Node2D" parent="Arrows/Arrow Input"]
 scale = Vector2(0.4, 0.4)
@@ -94,9 +94,9 @@ shape = SubResource("RectangleShape2D_st34r")
 
 [node name="ArrowSpawner" type="Node2D" parent="Arrows" node_paths=PackedStringArray("temp_label")]
 position = Vector2(0, -1362)
-script = ExtResource("4_fyou1")
+script = ExtResource("4_rax66")
 temp_label = NodePath("../../Label")
-beat = ExtResource("5_t3k1t")
+beat = ExtResource("5_qcsyk")
 
 [node name="Label" type="Label" parent="."]
 layout_mode = 1
@@ -115,4 +115,4 @@ theme_override_font_sizes/font_size = 46
 text = "test"
 horizontal_alignment = 1
 vertical_alignment = 1
-script = ExtResource("1_y4w8d")
+script = ExtResource("6_ohwo4")
