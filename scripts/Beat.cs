@@ -8,8 +8,8 @@ using System.Linq;
 
 public partial class Beat : Node2D
 {
-    [Export] TextEdit text;
-    [Export] Model model;
+    Label temporary_label;
+    //[Export] Model model;
     [Export] Sprite2D[] note_symbols;
     [Export] Area2D collider;
 
@@ -25,19 +25,22 @@ public partial class Beat : Node2D
         collider.AreaExited += ExitCollider;
         Input.ArrowKeyPressed += PressNote;
 
-        TEMP_note_indexes = temp_indexes.ToList();
+        /*TEMP_note_indexes = temp_indexes.ToList();
 
-        StartBeat(TEMP_note_indexes.ToArray());
+        StartBeat(TEMP_note_indexes.ToArray());*/
         base._Ready();
     }
     public override void _Process(double delta)
     {
-        this.Position += Vector2.Down * (70f * (float)delta);
+        this.Position += Vector2.Down * (100f * (float)delta);
         base._Process(delta);
     }
 
-    public void StartBeat(int[] note_indexes)
+    public void StartBeat(int[] note_indexes, Label temp_label)
     {
+        temporary_label = temp_label;
+        TEMP_note_indexes = note_indexes.ToList();
+        Position = Vector2.Zero;
         foreach (int note_index in note_indexes) {
             note_symbols[note_index].Show();
         }
@@ -84,19 +87,19 @@ public partial class Beat : Node2D
             switch (current_score)
             {
                 case 1:
-                    text.Text = "OKAY";
+                    temporary_label.Text = "OKAY";
                     break;
                 case 2:
-                    text.Text = "GOOD";
+                    temporary_label.Text = "GOOD";
                     break;
                 case 3:
-                    text.Text = "PERFECT";
+                    temporary_label.Text = "PERFECT";
                     break;
             }
         }
         else
         {
-            text.Text = "MISS";
+            temporary_label.Text = "MISS";
         }
         QueueFree();
     }

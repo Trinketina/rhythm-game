@@ -1,0 +1,45 @@
+[gd_scene load_steps=7 format=3 uid="uid://cuyu2sio30wba"]
+
+[ext_resource type="Script" uid="uid://dkins5ejiwq3n" path="res://scripts/Beat.cs" id="1_wqlym"]
+[ext_resource type="Texture2D" uid="uid://cih2vx0ngvdxt" path="res://sprites/up_arrow.png" id="2_kaxoi"]
+[ext_resource type="Texture2D" uid="uid://2kddoplcgss4" path="res://sprites/left_arrow.png" id="3_yjhbg"]
+[ext_resource type="Texture2D" uid="uid://wnce1id37nvw" path="res://sprites/right_arrow.png" id="4_e5tvi"]
+[ext_resource type="Texture2D" uid="uid://ybas1ci0jymj" path="res://sprites/down_arrow.png" id="5_d4e1j"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_choun"]
+size = Vector2(200, 1)
+
+[node name="beat" type="Node2D" node_paths=PackedStringArray("note_symbols", "collider")]
+scale = Vector2(2.5, 2.5)
+script = ExtResource("1_wqlym")
+note_symbols = [NodePath("UpArrow"), NodePath("LeftArrow"), NodePath("RightArrow"), NodePath("DownArrow")]
+collider = NodePath("Area2D")
+temp_indexes = PackedInt32Array(0, 3)
+
+[node name="UpArrow" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(-60, 0)
+texture = ExtResource("2_kaxoi")
+
+[node name="LeftArrow" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(-20, 0)
+rotation = -1.5708
+texture = ExtResource("3_yjhbg")
+
+[node name="RightArrow" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(20, 0)
+rotation = 1.5708
+texture = ExtResource("4_e5tvi")
+
+[node name="DownArrow" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(60, 0)
+rotation = -3.14159
+texture = ExtResource("5_d4e1j")
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("RectangleShape2D_choun")

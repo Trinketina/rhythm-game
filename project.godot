@@ -15,6 +15,11 @@ run/main_scene="uid://dkgv8e08fxv1l"
 config/features=PackedStringArray("4.4", "C#", "GL Compatibility")
 config/icon="res://icon.svg"
 
+[display]
+
+window/stretch/mode="viewport"
+window/stretch/aspect="expand"
+
 [dotnet]
 
 project/assembly_name="DDR Clone"
