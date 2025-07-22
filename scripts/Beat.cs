@@ -15,9 +15,10 @@ public partial class Beat : Node2D
 
     int current_score = -1;
     List<int> note_scores;
-
+    [ExportGroup("Temporary")]
     [Export] int[] temp_indexes;
-    List<int> TEMP_note_indexes = new() { 0,2 };
+    [Export] int speed;
+    List<int> TEMP_note_indexes;
 
     public override void _Ready()
     {
@@ -32,7 +33,7 @@ public partial class Beat : Node2D
     }
     public override void _Process(double delta)
     {
-        this.Position += Vector2.Down * (100f * (float)delta);
+        this.Position += Vector2.Down * (speed * (float)delta);
         base._Process(delta);
     }
 
@@ -84,7 +85,9 @@ public partial class Beat : Node2D
         GD.Print("end_beat");
         if (success)
         {
-            switch (current_score)
+            int full_score = note_scores.Sum();
+            // 4
+            switch (full_score / note_scores.Count)
             {
                 case 1:
                     temporary_label.Text = "OKAY";
@@ -92,7 +95,7 @@ public partial class Beat : Node2D
                 case 2:
                     temporary_label.Text = "GOOD";
                     break;
-                case 3:
+                case 3: 
                     temporary_label.Text = "PERFECT";
                     break;
             }

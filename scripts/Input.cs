@@ -3,8 +3,7 @@ using System;
 
 public partial class Input : Node
 {
-    [Export] Resource note_resource;
-
+    [ExportGroup("Input Sprites")]
     [Export] Sprite2D arrow_up;
     [Export] Sprite2D arrow_left;
     [Export] Sprite2D arrow_right;

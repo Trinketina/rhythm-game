@@ -95,8 +95,8 @@ shape = SubResource("RectangleShape2D_st34r")
 [node name="ArrowSpawner" type="Node2D" parent="Arrows" node_paths=PackedStringArray("temp_label")]
 position = Vector2(0, -1362)
 script = ExtResource("4_rax66")
-temp_label = NodePath("../../Label")
 beat = ExtResource("5_qcsyk")
+temp_label = NodePath("../../Label")
 
 [node name="Label" type="Label" parent="."]
 layout_mode = 1

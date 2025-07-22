@@ -9,12 +9,13 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_choun"]
 size = Vector2(200, 1)
 
-[node name="beat" type="Node2D" node_paths=PackedStringArray("note_symbols", "collider")]
+[node name="beat" type="Node2D" node_paths=PackedStringArray("note_symbols", "collider") groups=["Beats"]]
 scale = Vector2(2.5, 2.5)
 script = ExtResource("1_wqlym")
 note_symbols = [NodePath("UpArrow"), NodePath("LeftArrow"), NodePath("RightArrow"), NodePath("DownArrow")]
 collider = NodePath("Area2D")
 temp_indexes = PackedInt32Array(0, 3)
+speed = 50
 
 [node name="UpArrow" type="Sprite2D" parent="."]
 visible = false

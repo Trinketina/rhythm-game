@@ -4,10 +4,15 @@ using System.Collections.Generic;
 
 public partial class BeatSpawner : Node
 {
-    [Export] Label temp_label;
     [Export] PackedScene beat;
 
+    [ExportGroup("Temporary")]
+    [Export] Label temp_label;
+
     List<int[]> beat_types;
+
+
+    [Signal()] public delegate void BeatSpawnedEventHandler();
     public override void _Ready()
     {
         beat_types = new List<int[]>();
@@ -36,5 +41,7 @@ public partial class BeatSpawner : Node
         GD.Print("spawn beat");
         int rand_beat_type = new Random().Next(beat_types.Count - 1);
         beat_node.StartBeat(beat_types[rand_beat_type], temp_label);
+
+        EmitSignal(SignalName.BeatSpawned);
     }
 }

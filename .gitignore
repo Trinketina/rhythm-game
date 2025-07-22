@@ -17,3 +17,6 @@ mono_crash.*.json
 
 #Visual Studio
 .vs/
+
+#Test Data
+.test_music_data/

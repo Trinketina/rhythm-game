@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://dpaocr86x42qb"]
+
+[ext_resource type="PackedScene" uid="uid://bi2e8a13wmmvj" path="res://scenes/RhythmGameplay.tscn" id="1_o5qli"]
+
+[node name="Main" type="Node2D"]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="RhythmUI" parent="CanvasLayer" instance=ExtResource("1_o5qli")]
