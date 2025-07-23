@@ -14,8 +14,6 @@ scale = Vector2(2.5, 2.5)
 script = ExtResource("1_wqlym")
 note_symbols = [NodePath("UpArrow"), NodePath("LeftArrow"), NodePath("RightArrow"), NodePath("DownArrow")]
 collider = NodePath("Area2D")
-temp_indexes = PackedInt32Array(0, 3)
-speed = 50
 
 [node name="UpArrow" type="Sprite2D" parent="."]
 visible = false

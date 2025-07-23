@@ -1,10 +1,9 @@
-[gd_scene load_steps=11 format=3 uid="uid://bi2e8a13wmmvj"]
+[gd_scene load_steps=10 format=3 uid="uid://bi2e8a13wmmvj"]
 
 [ext_resource type="Script" uid="uid://csv58cfy2u63q" path="res://scripts/Input.cs" id="1_ktx6y"]
-[ext_resource type="PackedScene" uid="uid://detehmyjkaqwv" path="res://scenes/arrow_hit.tscn" id="2_ld010"]
+[ext_resource type="PackedScene" uid="uid://detehmyjkaqwv" path="res://scenes/Arrow.tscn" id="2_ld010"]
 [ext_resource type="Texture2D" uid="uid://c32t65rydv88j" path="res://sprites/empty_arrow.png" id="3_et5t5"]
-[ext_resource type="Script" uid="uid://d0s4fav4lq1ox" path="res://scripts/BeatSpawner.cs" id="4_rax66"]
-[ext_resource type="PackedScene" uid="uid://cuyu2sio30wba" path="res://scenes/beat.tscn" id="5_qcsyk"]
+[ext_resource type="PackedScene" uid="uid://vi7n7at13bdx" path="res://scenes/Beatmap.tscn" id="6_ld010"]
 [ext_resource type="Script" uid="uid://teev7iq6w8h1" path="res://scripts/TempLabel.cs" id="6_ohwo4"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_y4w8d"]
@@ -92,11 +91,11 @@ scale = Vector2(2.5, 2.5)
 position = Vector2(0, -3.19998)
 shape = SubResource("RectangleShape2D_st34r")
 
-[node name="ArrowSpawner" type="Node2D" parent="Arrows" node_paths=PackedStringArray("temp_label")]
-position = Vector2(0, -1362)
-script = ExtResource("4_rax66")
-beat = ExtResource("5_qcsyk")
-temp_label = NodePath("../../Label")
+[node name="ArrowSpawner" type="Node2D" parent="Arrows"]
+position = Vector2(0, -648)
+
+[node name="Beatmap" parent="Arrows/ArrowSpawner" instance=ExtResource("6_ld010")]
+fall_rate = 200.0
 
 [node name="Label" type="Label" parent="."]
 layout_mode = 1
