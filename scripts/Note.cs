@@ -5,7 +5,9 @@ public partial class Note : Sprite2D
 {
     [Export] Area2D collider;
     [Export] Sprite2D held_note;
-    [Export] int texture_width = 36;
+    [Export] Sprite2D end_note;
+    int texture_frames = 4;
+    int texture_width = 42;
 
     public Action<int> OnReleaseNote; //index, sends up to beat
     public int length { get; private set; }
@@ -31,7 +33,7 @@ public partial class Note : Sprite2D
 
             held_note.Position = Vector2.Up * length;
             held_note.Offset = Vector2.Down * length / 2;
-            held_note.RegionRect = new(Vector2.Zero, new Vector2(texture_width, length));
+            held_note.RegionRect = new(Vector2.Right * ((texture_frames - 1) * texture_width), new Vector2(texture_width, length));
             
             held_note.Show();
         }
@@ -41,7 +43,16 @@ public partial class Note : Sprite2D
     {
         holding = true;
         press_score = press_value;
+        IncreaseSpriteSizes();
     }
+
+    public void IncreaseSpriteSizes()
+    {
+        //held_note.Frame = 4;
+        held_note.RegionRect = new(Vector2.Right * (texture_frames * texture_width), new Vector2(texture_width, length));
+        end_note.Frame = 2;
+    }
+
     public void ReleaseNote(int note_index)
     {
         if (note_index == index && holding)
@@ -56,6 +67,11 @@ public partial class Note : Sprite2D
             OnReleaseNote.Invoke(index);
             holding = false;
         }
+    }
+
+    public Vector2 GetEndPosition()
+    {
+        return end_note.GlobalPosition;
     }
 
     public void EnterCollider(Area2D area)

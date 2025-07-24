@@ -60,10 +60,14 @@ public partial class Input : Node
         base._Input(@event);
     }
 
-    public void ScaleButton(Sprite2D arrow_key)
+    public async void ScaleButton(Sprite2D arrow_key)
     {
         //Vector2 big_size = Vector2.One * scale_factor;
-        arrow_key.Scale = scale_factor;
+        //arrow_key.Scale = scale_factor;
+
+        arrow_key.Frame = 1;
+        await ToSignal(GetTree().CreateTimer(.05), "timeout");
+        arrow_key.Frame = 2;
     }
     public async void DeScaleButton(Sprite2D arrow_key)
     {
@@ -74,7 +78,19 @@ public partial class Input : Node
         while (time <= .1)
         {
             time += (float)GetProcessDeltaTime();
-            arrow_key.Scale = scale_factor.Lerp(Vector2.One, time * 10);
+            //arrow_key.Scale = scale_factor.Lerp(Vector2.One, time * 10);
+            switch (time)
+            {
+                case < .05f:
+                    arrow_key.Frame = 2;
+                    break;
+                case < .1f:
+                    arrow_key.Frame = 1;
+                    break;
+                default:
+                    arrow_key.Frame = 0;
+                    break;
+            }
             await ToSignal(GetTree().CreateTimer(GetProcessDeltaTime()), "timeout");
         }
     }

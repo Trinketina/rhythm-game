@@ -5,15 +5,16 @@ public partial class TempLabel : Label
 {
     public override void _Ready()
     {
-        ClearAfter(1.5f);
+        Text = "";
+        base._Ready();
     }
 
-    public async void ClearAfter(float seconds)
+    public async void ClearAfter(string text, float seconds)
     {
-        while (true)
-        {
-            Text = "";
-            await ToSignal(GetTree().CreateTimer(seconds), "timeout");
-        }
+        Text = text;
+
+        await ToSignal(GetTree().CreateTimer(seconds), "timeout");
+
+        Text = "";
     }
 }

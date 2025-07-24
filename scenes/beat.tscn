@@ -1,18 +1,10 @@
-[gd_scene load_steps=13 format=3 uid="uid://cuyu2sio30wba"]
+[gd_scene load_steps=7 format=3 uid="uid://cuyu2sio30wba"]
 
 [ext_resource type="Script" uid="uid://dkins5ejiwq3n" path="res://scripts/Beat.cs" id="1_wqlym"]
-[ext_resource type="Texture2D" uid="uid://cih2vx0ngvdxt" path="res://sprites/up_arrow.png" id="2_kaxoi"]
-[ext_resource type="Texture2D" uid="uid://d2iy4bc80lf86" path="res://sprites/left_held.png" id="3_ifmt0"]
-[ext_resource type="Script" uid="uid://c8ab3e5vs16e2" path="res://scripts/Note.cs" id="3_tg3gu"]
-[ext_resource type="Texture2D" uid="uid://wnce1id37nvw" path="res://sprites/left_arrow.png" id="4_e5tvi"]
-[ext_resource type="Texture2D" uid="uid://drlohf3phm75s" path="res://sprites/up_held.png" id="5_1bq65"]
-[ext_resource type="Texture2D" uid="uid://dw836xu60oym6" path="res://sprites/right_arrow.png" id="5_20mak"]
-[ext_resource type="Texture2D" uid="uid://ybas1ci0jymj" path="res://sprites/down_arrow.png" id="5_d4e1j"]
-[ext_resource type="Texture2D" uid="uid://dfofkqf5qa0dg" path="res://sprites/down_held.png" id="7_s7d5t"]
-[ext_resource type="Texture2D" uid="uid://wwco8ynkomie" path="res://sprites/right_held.png" id="9_tg3gu"]
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_20mak"]
-size = Vector2(36, 1)
+[ext_resource type="PackedScene" uid="uid://droeh8cc68hrh" path="res://scenes/note.tscn" id="2_3q1r1"]
+[ext_resource type="Texture2D" uid="uid://d4m82mnrk2ijv" path="res://sprites/up_arrow_spritesheet.png" id="4_tg3gu"]
+[ext_resource type="Texture2D" uid="uid://ck6gsedvbdwsg" path="res://sprites/down_arrow_spritesheet.png" id="5_s7d5t"]
+[ext_resource type="Texture2D" uid="uid://yeo2i6iemwau" path="res://sprites/right_arrow_spritesheet.png" id="7_1bq65"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_choun"]
 size = Vector2(200, 1)
@@ -23,130 +15,45 @@ script = ExtResource("1_wqlym")
 notes = [NodePath("Note_0"), NodePath("Note_1"), NodePath("Note_2"), NodePath("Note_3")]
 collider = NodePath("Beat Collider")
 
-[node name="Note_0" type="Sprite2D" parent="." node_paths=PackedStringArray("collider", "held_note")]
-visible = false
-position = Vector2(-60, 0)
-texture = ExtResource("4_e5tvi")
-script = ExtResource("3_tg3gu")
-collider = NodePath("Note_0_MIDDLE/Area2D")
-held_note = NodePath("Note_0_MIDDLE")
+[node name="Note_0" parent="." instance=ExtResource("2_3q1r1")]
+position = Vector2(-63, 0)
 
-[node name="Note_0_MIDDLE" type="Sprite2D" parent="Note_0"]
-visible = false
-z_index = -1
-position = Vector2(0, -100)
-scale = Vector2(1, 1)
-texture = ExtResource("3_ifmt0")
-offset = Vector2(0, 50)
-region_enabled = true
-region_rect = Rect2(0, 0, 36, 100)
+[node name="Note_1" parent="." instance=ExtResource("2_3q1r1")]
+position = Vector2(-21, 0)
+texture = ExtResource("4_tg3gu")
 
-[node name="Note_0_END" type="Sprite2D" parent="Note_0/Note_0_MIDDLE"]
-z_index = -1
-position = Vector2(0, -7.62939e-06)
-scale = Vector2(1, 1)
-texture = ExtResource("4_e5tvi")
+[node name="Middle" parent="Note_1" index="0"]
+texture = ExtResource("4_tg3gu")
 
-[node name="Area2D" type="Area2D" parent="Note_0/Note_0_MIDDLE"]
-scale = Vector2(1, 1)
+[node name="End" parent="Note_1/Middle" index="0"]
+texture = ExtResource("4_tg3gu")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Note_0/Note_0_MIDDLE/Area2D"]
-shape = SubResource("RectangleShape2D_20mak")
+[node name="Note_2" parent="." instance=ExtResource("2_3q1r1")]
+position = Vector2(21, 0)
+texture = ExtResource("5_s7d5t")
 
-[node name="Note_1" type="Sprite2D" parent="." node_paths=PackedStringArray("collider", "held_note")]
-visible = false
-position = Vector2(-20, 0)
-texture = ExtResource("2_kaxoi")
-script = ExtResource("3_tg3gu")
-collider = NodePath("Note_1_MIDDLE/Area2D")
-held_note = NodePath("Note_1_MIDDLE")
+[node name="Middle" parent="Note_2" index="0"]
+texture = ExtResource("5_s7d5t")
 
-[node name="Note_1_MIDDLE" type="Sprite2D" parent="Note_1"]
-visible = false
-z_index = -1
-position = Vector2(0, -100)
-scale = Vector2(1, 1)
-texture = ExtResource("5_1bq65")
-offset = Vector2(0, 50)
-region_enabled = true
-region_rect = Rect2(0, 0, 36, 100)
+[node name="End" parent="Note_2/Middle" index="0"]
+texture = ExtResource("5_s7d5t")
 
-[node name="Note_1_END" type="Sprite2D" parent="Note_1/Note_1_MIDDLE"]
-z_index = -1
-position = Vector2(0, -7.62939e-06)
-scale = Vector2(1, 1)
-texture = ExtResource("2_kaxoi")
+[node name="Note_3" parent="." instance=ExtResource("2_3q1r1")]
+position = Vector2(63, 0)
+texture = ExtResource("7_1bq65")
 
-[node name="Area2D" type="Area2D" parent="Note_1/Note_1_MIDDLE"]
-position = Vector2(0, -7.62939e-06)
-scale = Vector2(1, 1)
+[node name="Middle" parent="Note_3" index="0"]
+texture = ExtResource("7_1bq65")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Note_1/Note_1_MIDDLE/Area2D"]
-shape = SubResource("RectangleShape2D_20mak")
-
-[node name="Note_2" type="Sprite2D" parent="." node_paths=PackedStringArray("collider", "held_note")]
-visible = false
-position = Vector2(20, 0)
-texture = ExtResource("5_d4e1j")
-script = ExtResource("3_tg3gu")
-collider = NodePath("Note_2_MIDDLE/Area2D")
-held_note = NodePath("Note_2_MIDDLE")
-
-[node name="Note_2_MIDDLE" type="Sprite2D" parent="Note_2"]
-visible = false
-z_index = -1
-position = Vector2(0, -100)
-scale = Vector2(1, 1)
-texture = ExtResource("7_s7d5t")
-offset = Vector2(0, 50)
-region_enabled = true
-region_rect = Rect2(0, 0, 36, 100)
-
-[node name="Note_2_END" type="Sprite2D" parent="Note_2/Note_2_MIDDLE"]
-z_index = -1
-position = Vector2(0, -7.62939e-06)
-scale = Vector2(1, 1)
-texture = ExtResource("5_d4e1j")
-
-[node name="Area2D" type="Area2D" parent="Note_2/Note_2_MIDDLE"]
-position = Vector2(0, -7.62939e-06)
-scale = Vector2(1, 1)
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Note_2/Note_2_MIDDLE/Area2D"]
-shape = SubResource("RectangleShape2D_20mak")
-
-[node name="Note_3" type="Sprite2D" parent="." node_paths=PackedStringArray("collider", "held_note")]
-visible = false
-position = Vector2(60, 0)
-texture = ExtResource("5_20mak")
-script = ExtResource("3_tg3gu")
-collider = NodePath("Note_3_MIDDLE/Area2D")
-held_note = NodePath("Note_3_MIDDLE")
-
-[node name="Note_3_MIDDLE" type="Sprite2D" parent="Note_3"]
-visible = false
-z_index = -1
-position = Vector2(0, -100)
-scale = Vector2(1, 1)
-texture = ExtResource("9_tg3gu")
-offset = Vector2(0, 50)
-region_enabled = true
-region_rect = Rect2(0, 0, 36, 100)
-
-[node name="Note_3_END" type="Sprite2D" parent="Note_3/Note_3_MIDDLE"]
-z_index = -1
-position = Vector2(0, -7.62939e-06)
-scale = Vector2(1, 1)
-texture = ExtResource("5_20mak")
-
-[node name="Area2D" type="Area2D" parent="Note_3/Note_3_MIDDLE"]
-position = Vector2(0, -7.62939e-06)
-scale = Vector2(1, 1)
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Note_3/Note_3_MIDDLE/Area2D"]
-shape = SubResource("RectangleShape2D_20mak")
+[node name="End" parent="Note_3/Middle" index="0"]
+texture = ExtResource("7_1bq65")
 
 [node name="Beat Collider" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Beat Collider"]
 shape = SubResource("RectangleShape2D_choun")
+
+[editable path="Note_0"]
+[editable path="Note_1"]
+[editable path="Note_2"]
+[editable path="Note_3"]

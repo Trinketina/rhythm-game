@@ -1,11 +1,16 @@
-[gd_scene load_steps=11 format=3 uid="uid://bi2e8a13wmmvj"]
+[gd_scene load_steps=16 format=3 uid="uid://bi2e8a13wmmvj"]
 
 [ext_resource type="Script" uid="uid://csv58cfy2u63q" path="res://scripts/Input.cs" id="1_ktx6y"]
 [ext_resource type="PackedScene" uid="uid://detehmyjkaqwv" path="res://scenes/Arrow.tscn" id="2_ld010"]
-[ext_resource type="Texture2D" uid="uid://c32t65rydv88j" path="res://sprites/empty_arrow.png" id="3_et5t5"]
+[ext_resource type="Texture2D" uid="uid://b5miqwtjbeuxw" path="res://sprites/left_arrow_spritesheet.png" id="3_ld010"]
+[ext_resource type="Texture2D" uid="uid://d4m82mnrk2ijv" path="res://sprites/up_arrow_spritesheet.png" id="4_et5t5"]
 [ext_resource type="Script" uid="uid://ion03kpiyln6" path="res://scripts/ScoreHandler.cs" id="5_ktx6y"]
+[ext_resource type="Texture2D" uid="uid://eo30i1ua20ih" path="res://sprites/arrow_spritesheet.png" id="5_ld010"]
+[ext_resource type="Texture2D" uid="uid://ck6gsedvbdwsg" path="res://sprites/down_arrow_spritesheet.png" id="5_rax66"]
+[ext_resource type="Script" uid="uid://bvqaqwjo116bw" path="res://scripts/HitVisualizers.cs" id="6_a8d5y"]
 [ext_resource type="PackedScene" uid="uid://vi7n7at13bdx" path="res://scenes/Beatmap.tscn" id="6_ld010"]
 [ext_resource type="Script" uid="uid://teev7iq6w8h1" path="res://scripts/TempLabel.cs" id="6_ohwo4"]
+[ext_resource type="Texture2D" uid="uid://yeo2i6iemwau" path="res://sprites/right_arrow_spritesheet.png" id="6_qcsyk"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_y4w8d"]
 size = Vector2(300, 8)
@@ -32,7 +37,9 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 2.0
 offset_top = 1.0
+offset_right = 2.0
 offset_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
@@ -42,6 +49,7 @@ value_label = NodePath("Hit Label")
 combo = NodePath("combo")
 
 [node name="Hit Label" type="Label" parent="Control"]
+z_index = 1
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -90,7 +98,7 @@ grow_vertical = 0
 
 [node name="Arrow Input" type="Node2D" parent="Arrows" node_paths=PackedStringArray("arrow_left", "arrow_up", "arrow_down", "arrow_right")]
 z_index = 1
-position = Vector2(-3.05176e-05, -85)
+position = Vector2(3.05176e-05, -87)
 scale = Vector2(2.5, 2.5)
 script = ExtResource("1_ktx6y")
 scale_factor = Vector2(1.5, 1.5)
@@ -100,24 +108,34 @@ arrow_down = NodePath("arrow_down")
 arrow_right = NodePath("arrow_right")
 
 [node name="arrow_left" parent="Arrows/Arrow Input" instance=ExtResource("2_ld010")]
-position = Vector2(-60, 0)
+position = Vector2(-63, 0)
 rotation = -1.5708
+texture = ExtResource("5_ld010")
+hframes = 5
+vframes = 5
 
 [node name="arrow_up" type="Sprite2D" parent="Arrows/Arrow Input"]
-position = Vector2(-20, 0)
-texture = ExtResource("3_et5t5")
+position = Vector2(-21, 0)
+texture = ExtResource("5_ld010")
+hframes = 5
+vframes = 5
 
 [node name="arrow_down" type="Sprite2D" parent="Arrows/Arrow Input"]
-position = Vector2(20, 0)
-rotation = 3.14159
-texture = ExtResource("3_et5t5")
+position = Vector2(21, 0)
+rotation = -3.14159
+texture = ExtResource("5_ld010")
+hframes = 5
+vframes = 5
 
 [node name="arrow_right" type="Sprite2D" parent="Arrows/Arrow Input"]
-position = Vector2(60, 0)
+position = Vector2(63, 0)
 rotation = 1.5708
-texture = ExtResource("3_et5t5")
+texture = ExtResource("5_ld010")
+hframes = 5
+vframes = 5
 
 [node name="Colliders" type="Node2D" parent="Arrows/Arrow Input"]
+visible = false
 scale = Vector2(0.4, 0.4)
 
 [node name="perfect" type="Area2D" parent="Arrows/Arrow Input/Colliders"]
@@ -145,11 +163,146 @@ scale = Vector2(2.5, 2.5)
 position = Vector2(0, -3.19998)
 shape = SubResource("RectangleShape2D_st34r")
 
-[node name="Beatmap Starting Position" type="Node2D" parent="Arrows"]
+[node name="Keyhit Visualizers" type="Node2D" parent="Arrows" node_paths=PackedStringArray("visualizer_sprites", "hold_sprites")]
+position = Vector2(1, -87)
+scale = Vector2(2.4, 2.4)
+script = ExtResource("6_a8d5y")
+visualizer_sprites = [NodePath("Key0"), NodePath("Key1"), NodePath("Key2"), NodePath("Key3")]
+hold_sprites = [NodePath("Key0/Mask/Hold"), NodePath("Key1/Mask/Hold"), NodePath("Key2/Mask/Hold"), NodePath("Key3/Mask/Hold")]
+
+[node name="Key0" type="Sprite2D" parent="Arrows/Keyhit Visualizers"]
+visible = false
+z_index = 1
+position = Vector2(-63, 0)
+texture = ExtResource("3_ld010")
+hframes = 5
+frame = 2
+
+[node name="Mask" type="Sprite2D" parent="Arrows/Keyhit Visualizers/Key0"]
+clip_children = 1
+texture = ExtResource("3_ld010")
+offset = Vector2(0, -500)
+region_enabled = true
+region_rect = Rect2(168, 0, 42, 1000)
+
+[node name="Hold" type="Sprite2D" parent="Arrows/Keyhit Visualizers/Key0/Mask"]
+visible = false
+show_behind_parent = true
+position = Vector2(0, -69.2)
+texture = ExtResource("3_ld010")
+offset = Vector2(0, 500)
+region_enabled = true
+region_rect = Rect2(168, 0, 42, 1000)
+
+[node name="End" type="Sprite2D" parent="Arrows/Keyhit Visualizers/Key0/Mask/Hold"]
+z_index = 1
+position = Vector2(0, -7.62939e-06)
+texture = ExtResource("3_ld010")
+hframes = 5
+frame = 2
+
+[node name="Key1" type="Sprite2D" parent="Arrows/Keyhit Visualizers"]
+visible = false
+z_index = 1
+position = Vector2(-21, 0)
+texture = ExtResource("4_et5t5")
+hframes = 5
+frame = 2
+
+[node name="Mask" type="Sprite2D" parent="Arrows/Keyhit Visualizers/Key1"]
+clip_children = 1
+texture = ExtResource("4_et5t5")
+offset = Vector2(0, -500)
+region_enabled = true
+region_rect = Rect2(168, 0, 42, 1000)
+
+[node name="Hold" type="Sprite2D" parent="Arrows/Keyhit Visualizers/Key1/Mask"]
+visible = false
+show_behind_parent = true
+position = Vector2(0, -69.2)
+texture = ExtResource("4_et5t5")
+offset = Vector2(0, 500)
+region_enabled = true
+region_rect = Rect2(168, 0, 42, 1000)
+
+[node name="End" type="Sprite2D" parent="Arrows/Keyhit Visualizers/Key1/Mask/Hold"]
+z_index = 1
+position = Vector2(0, -7.62939e-06)
+texture = ExtResource("4_et5t5")
+hframes = 5
+frame = 2
+
+[node name="Key2" type="Sprite2D" parent="Arrows/Keyhit Visualizers"]
+visible = false
+z_index = 1
+position = Vector2(21, 0)
+texture = ExtResource("5_rax66")
+hframes = 5
+frame = 2
+
+[node name="Mask" type="Sprite2D" parent="Arrows/Keyhit Visualizers/Key2"]
+clip_children = 1
+texture = ExtResource("5_rax66")
+offset = Vector2(0, -500)
+region_enabled = true
+region_rect = Rect2(168, 0, 42, 1000)
+
+[node name="Hold" type="Sprite2D" parent="Arrows/Keyhit Visualizers/Key2/Mask"]
+visible = false
+show_behind_parent = true
+position = Vector2(0, -69.2)
+texture = ExtResource("5_rax66")
+offset = Vector2(0, 500)
+region_enabled = true
+region_rect = Rect2(168, 0, 42, 1000)
+
+[node name="End" type="Sprite2D" parent="Arrows/Keyhit Visualizers/Key2/Mask/Hold"]
+z_index = 1
+position = Vector2(0, -7.62939e-06)
+texture = ExtResource("5_rax66")
+hframes = 5
+frame = 2
+
+[node name="Key3" type="Sprite2D" parent="Arrows/Keyhit Visualizers"]
+visible = false
+z_index = 1
+position = Vector2(63, 0)
+texture = ExtResource("6_qcsyk")
+hframes = 5
+frame = 2
+
+[node name="Mask" type="Sprite2D" parent="Arrows/Keyhit Visualizers/Key3"]
+clip_children = 1
+texture = ExtResource("6_qcsyk")
+offset = Vector2(0, -500)
+region_enabled = true
+region_rect = Rect2(168, 0, 42, 1000)
+
+[node name="Hold" type="Sprite2D" parent="Arrows/Keyhit Visualizers/Key3/Mask"]
+visible = false
+show_behind_parent = true
+position = Vector2(0, -69.2)
+texture = ExtResource("6_qcsyk")
+offset = Vector2(0, 500)
+region_enabled = true
+region_rect = Rect2(168, 0, 42, 1000)
+
+[node name="End" type="Sprite2D" parent="Arrows/Keyhit Visualizers/Key3/Mask/Hold"]
+z_index = 1
+position = Vector2(0, -7.62939e-06)
+texture = ExtResource("6_qcsyk")
+hframes = 5
+frame = 2
+
+[node name="Beatmap Holder" type="Node2D" parent="Arrows"]
 position = Vector2(0, -648)
 
-[node name="Beatmap" parent="Arrows/Beatmap Starting Position" instance=ExtResource("6_ld010")]
+[node name="Beatmap" parent="Arrows/Beatmap Holder" instance=ExtResource("6_ld010")]
+fall_rate = 100.0
 
-[connection signal="HitEnded" from="Arrows/Beatmap Starting Position/Beatmap" to="Control" method="OnBeatmapHitEnded"]
-[connection signal="HoldEnded" from="Arrows/Beatmap Starting Position/Beatmap" to="Control" method="OnBeatmapHoldEnded"]
-[connection signal="HoldStarted" from="Arrows/Beatmap Starting Position/Beatmap" to="Control" method="OnBeatmapHoldStarted"]
+[connection signal="Hit" from="Arrows/Beatmap Holder/Beatmap" to="Arrows/Keyhit Visualizers" method="OnHitNote"]
+[connection signal="HitEnded" from="Arrows/Beatmap Holder/Beatmap" to="Control" method="OnBeatmapHitEnded"]
+[connection signal="HoldEnded" from="Arrows/Beatmap Holder/Beatmap" to="Control" method="OnBeatmapHoldEnded"]
+[connection signal="HoldEnded" from="Arrows/Beatmap Holder/Beatmap" to="Arrows/Keyhit Visualizers" method="OnStopHold"]
+[connection signal="HoldStarted" from="Arrows/Beatmap Holder/Beatmap" to="Control" method="OnBeatmapHoldStarted"]
+[connection signal="HoldStarted" from="Arrows/Beatmap Holder/Beatmap" to="Arrows/Keyhit Visualizers" method="OnStartHold"]

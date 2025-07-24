@@ -7,7 +7,7 @@ public partial class ScoreHandler : Control
 {
     [ExportGroup("Node Connections")]
     [Export] Label score_label;
-    [Export] Label value_label;
+    [Export] TempLabel value_label;
     [Export] Label combo;
 
     [ExportGroup("Score Modifiers")]
@@ -32,27 +32,29 @@ public partial class ScoreHandler : Control
         {
             Current_Combo++;
             Full_Score += score_multiplier * Current_Combo;
-            UpdateScoreText();
-            UpdateComboText();
-            UpdateHitText(hit_value);
         }
+        else
+        {
+            Current_Combo = 0;
+        }
+        UpdateScoreText();
+        UpdateHitText(hit_value);
+        UpdateComboText();
     }
-    public void OnBeatmapHoldStarted(int index)
+    public void OnBeatmapHoldStarted(int index, Vector2 global_position)
     {
         held_indexes.Add(index);
         HoldingNote(index);
     }
-    public void OnBeatmapHoldEnded(int index)
+    public void OnBeatmapHoldEnded(int index, Vector2 global_position)
     {
         held_indexes.Remove(index);
     }
 
     private async void HoldingNote(int index)
     {
-        GD.Print("holding holding note");
         while (held_indexes.Contains(index))
         {
-            GD.Print("true true");
             await ToSignal(GetTree().CreateTimer(held_multipler_seconds), "timeout");
             Current_Combo++;
             Full_Score += Current_Combo;
@@ -67,19 +69,19 @@ public partial class ScoreHandler : Control
         {
             case 0:
                 Current_Combo = 0;
-                value_label.Text = "MISS";
+                value_label.ClearAfter("MISS", 1.5f);
                 break;
             case 1:
                 Current_Combo++;
-                value_label.Text = "Okay...";
+                value_label.ClearAfter("Okay...", 1.5f);
                 break;
             case 2:
                 Current_Combo++;
-                value_label.Text = "Good!";
+                value_label.ClearAfter("Good!", 1.5f);
                 break;
             case 3:
                 Current_Combo++;
-                value_label.Text = "PERFECT";
+                value_label.ClearAfter("PERFECT", 1.5f);
                 break;
         }
     }

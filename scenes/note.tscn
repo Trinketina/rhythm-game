@@ -1,0 +1,38 @@
+[gd_scene load_steps=4 format=3 uid="uid://droeh8cc68hrh"]
+
+[ext_resource type="Texture2D" uid="uid://b5miqwtjbeuxw" path="res://sprites/left_arrow_spritesheet.png" id="2_njo4t"]
+[ext_resource type="Script" uid="uid://c8ab3e5vs16e2" path="res://scripts/Note.cs" id="3_8ibmt"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_20mak"]
+size = Vector2(36, 1)
+
+[node name="Hit" type="Sprite2D" node_paths=PackedStringArray("collider", "held_note", "end_note")]
+visible = false
+texture = ExtResource("2_njo4t")
+hframes = 5
+region_rect = Rect2(0, 0, 36, 36)
+script = ExtResource("3_8ibmt")
+collider = NodePath("Middle/Area2D")
+held_note = NodePath("Middle")
+end_note = NodePath("Middle/End")
+
+[node name="Middle" type="Sprite2D" parent="."]
+visible = false
+show_behind_parent = true
+position = Vector2(0, -100)
+texture = ExtResource("2_njo4t")
+offset = Vector2(0, 50)
+region_enabled = true
+region_rect = Rect2(126, 0, 42, 100)
+region_filter_clip_enabled = true
+
+[node name="End" type="Sprite2D" parent="Middle"]
+show_behind_parent = true
+position = Vector2(0, -7.62939e-06)
+texture = ExtResource("2_njo4t")
+hframes = 5
+
+[node name="Area2D" type="Area2D" parent="Middle"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Middle/Area2D"]
+shape = SubResource("RectangleShape2D_20mak")

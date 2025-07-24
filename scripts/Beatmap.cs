@@ -5,9 +5,9 @@ using System.Collections.Generic;
 public partial class Beatmap : Node2D
 {
     [Signal()] public delegate void HitEndedEventHandler(int score_multiplier, int hit_value);
-    [Signal()] public delegate void HoldStartedEventHandler(int index);
-    [Signal()] public delegate void HoldEndedEventHandler(int index);
-
+    [Signal()] public delegate void HoldStartedEventHandler(int index, Vector2 tail_global_position);
+    [Signal()] public delegate void HoldEndedEventHandler(int index, Vector2 global_position);
+    [Signal()] public delegate void HitEventHandler(int index, Vector2 global_position);
     [Export] float fall_rate;
     [Export] PackedScene beat;
 
@@ -51,28 +51,32 @@ public partial class Beatmap : Node2D
     {
         Beat beat_node = beat.Instantiate<Beat>();
         AddChild(beat_node);
-        beat_node.StartBeat(beat_values);
+        beat_node.StartBeat(beat_values, this);
 
 
-        beat_node.OnEndNote += EndNote;
+        /*beat_node.OnEndNote += EndNote;
         beat_node.OnStartHoldNote += StartHold;
-        beat_node.OnEndHoldNote += EndHold;
+        beat_node.OnEndHoldNote += EndHold;*/
+        GD.Print("spawn note");
     }
-
-    private void EndNote(int score_multiplier, int hit_value)
+    public void HitNote(int index, Vector2 global_position)
+    {
+        EmitSignal(SignalName.Hit, index, global_position);
+    }
+    public void EndNote(int score_multiplier, int hit_value)
     {
         EmitSignal(SignalName.HitEnded, score_multiplier, hit_value);
     }
 
-    private void StartHold(int index)
+    public void StartHold(int index, Vector2 global_position)
     {
         GD.Print("start hold");
-        EmitSignal(SignalName.HoldStarted, index);
+        EmitSignal(SignalName.HoldStarted, index, global_position);
     }
-    private void EndHold(int index)
+    public void EndHold(int index, Vector2 global_position)
     {
         GD.Print("end hold");
-        EmitSignal(SignalName.HoldEnded, index);
+        EmitSignal(SignalName.HoldEnded, index, global_position);
     }
 
     private void InitDefaultBeats()

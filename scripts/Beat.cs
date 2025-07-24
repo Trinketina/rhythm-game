@@ -6,9 +6,9 @@ using System.Linq;
 public partial class Beat : Node2D
 {
     bool ready = false;
-    public Action<int, int> OnEndNote; //score_multiplier, hit_value
+    /*public Action<int, int> OnEndNote; //score_multiplier, hit_value
     public Action<int> OnStartHoldNote; //index
-    public Action<int> OnEndHoldNote; //index
+    public Action<int> OnEndHoldNote; //index*/
 
     
     [Export] Note[] notes;
@@ -19,6 +19,7 @@ public partial class Beat : Node2D
     List<int> current_note_indexes;
     List<int> held_note_indexes;
 
+    Beatmap beatmap;
 
     public override void _Ready()
     {
@@ -33,8 +34,9 @@ public partial class Beat : Node2D
         StartBeat(TEMP_note_indexes.ToArray());*/
         base._Ready();
     }
-    public void StartBeat(BeatValues beat)
+    public void StartBeat(BeatValues beat, Beatmap _beatmap)
     {
+        beatmap = _beatmap;
         //current_note_indexes = beat.note_indexes.ToList();
         current_note_indexes = new();
         held_note_indexes = new();
@@ -71,14 +73,21 @@ public partial class Beat : Node2D
             {
                 current_note_indexes.Remove(note_index);
                 note_scores.Add(current_score);
+                notes[note_index].Frame = 2;
+
+                //maybe temp??
+                beatmap.HitNote(note_index, notes[note_index].GlobalPosition);
+                notes[note_index].Hide();
 
                 if (held_note_indexes.Contains(note_index))
                 {
                     notes[note_index].StartHold(current_score);
-                    OnStartHoldNote?.Invoke(note_index);
+                    //OnStartHoldNote?.Invoke(note_index);
+                    beatmap.StartHold(note_index, notes[note_index].GetEndPosition());
                 }
                 else
                 {
+                    //beatmap.HitNote(note_index, notes[note_index].GlobalPosition);
                     notes[note_index].Hide();
                 }
                 if (current_note_indexes.Count == 0)
@@ -97,8 +106,10 @@ public partial class Beat : Node2D
     public void NoteReleased(int index)
     {
         Note note = notes[index];
-        OnEndNote?.Invoke(note.held_score, note.held_score);
-        OnEndHoldNote?.Invoke(index);
+        //OnEndNote?.Invoke(note.held_score, note.held_score);
+        beatmap.EndNote(note.held_score, note.held_score);
+        //OnEndHoldNote?.Invoke(index);
+        beatmap.EndHold(index, note.GlobalPosition);
         notes[index].Hide();
         held_note_indexes.Remove(index);
         //GD.Print("Released, score: " + note.held_score);
@@ -115,7 +126,8 @@ public partial class Beat : Node2D
         if (success)
         {
             int full_score = note_scores.Sum();
-            OnEndNote?.Invoke(full_score, full_score / note_scores.Count);
+            //OnEndNote?.Invoke(full_score, full_score / note_scores.Count);
+            beatmap.EndNote(full_score, full_score / note_scores.Count);
         }
         else
         {
@@ -123,7 +135,8 @@ public partial class Beat : Node2D
             {
                 note.Hide();
             }
-            OnEndNote?.Invoke(0, 0);
+            //OnEndNote?.Invoke(0, 0);
+            beatmap.EndNote(0,0);
         }
         //OnEndNote = null;
         ready = false;
