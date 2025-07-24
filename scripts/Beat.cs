@@ -6,46 +6,54 @@ using System.Linq;
 public partial class Beat : Node2D
 {
     bool ready = false;
-    public Action<int, int> OnEndNote; //score, value //TODO:: connect to resource and send its signal instead
+    public Action<int, int> OnEndNote; //score_multiplier, hit_value
+    public Action<int> OnStartHoldNote; //index
+    public Action<int> OnEndHoldNote; //index
 
-
-    [Export] Sprite2D[] note_symbols;
+    
+    [Export] Note[] notes;
     [Export] Area2D collider;
 
-    int current_score = -1;
+    public int current_score { get; private set; } = -1;
     List<int> note_scores;
     List<int> current_note_indexes;
+    List<int> held_note_indexes;
 
 
     public override void _Ready()
     {
         collider.AreaEntered += EnterCollider;
         collider.AreaExited += ExitCollider;
-        Input.ArrowKeyPressed += PressNote;
+
+        Input.NoteKeyPressed += PressNote;
+
 
         /*TEMP_note_indexes = temp_indexes.ToList();
 
         StartBeat(TEMP_note_indexes.ToArray());*/
         base._Ready();
     }
-    public void StartBeat(int[] note_indexes, Label temp_label)
-    {
-        /*temporary_label = temp_label;
-        current_note_indexes = note_indexes.ToList();
-        Position = Vector2.Zero;
-        foreach (int note_index in note_indexes) {
-            note_symbols[note_index].Show();
-        }
-        note_scores = new();*/
-    }
     public void StartBeat(BeatValues beat)
     {
-        current_note_indexes = beat.note_indexes.ToList();
+        //current_note_indexes = beat.note_indexes.ToList();
+        current_note_indexes = new();
+        held_note_indexes = new();
         Position = beat.position;
 
-        foreach (int note_index in beat.note_indexes)
+        for (int i = 0; i < beat.note_lengths.Length; i++)
         {
-            note_symbols[note_index].Show();
+            if (beat.note_lengths[i] > 0)
+            {
+                notes[i].EnableNote(i, beat.note_lengths[i]);
+                current_note_indexes.Add(i);
+
+                if (beat.note_lengths[i] > 1)
+                {
+                    notes[i].OnReleaseNote += NoteReleased;
+                    held_note_indexes.Add(i);
+                }
+            }
+            
         }
         note_scores = new();
 
@@ -63,67 +71,68 @@ public partial class Beat : Node2D
             {
                 current_note_indexes.Remove(note_index);
                 note_scores.Add(current_score);
-                GD.Print("Key Pressed, score:" + current_score);
-                note_symbols[note_index].Hide();
+
+                if (held_note_indexes.Contains(note_index))
+                {
+                    notes[note_index].StartHold(current_score);
+                    OnStartHoldNote?.Invoke(note_index);
+                }
+                else
+                {
+                    notes[note_index].Hide();
+                }
                 if (current_note_indexes.Count == 0)
                 {
-                    EndBeat(true);
+                    EndHit(true);
                 }
             }
             else
             {
                 // NOTE WAS MISSED
-                GD.Print("Key Missed");
-                EndBeat(false);
+                //GD.Print("Key Missed");
+                EndHit(false);
             }
         }
     }
+    public void NoteReleased(int index)
+    {
+        Note note = notes[index];
+        OnEndNote?.Invoke(note.held_score, note.held_score);
+        OnEndHoldNote?.Invoke(index);
+        notes[index].Hide();
+        held_note_indexes.Remove(index);
+        //GD.Print("Released, score: " + note.held_score);
+    }
 
-    public void EndBeat(bool success)
+    public void EndHit(bool success)
     {
         if (!ready) return;
 
         collider.AreaEntered -= EnterCollider;
         collider.AreaExited -= ExitCollider;
-        Input.ArrowKeyPressed -= PressNote;
-        /*foreach (var note in note_symbols)
-        {
-            note.Hide();
-        }*/
-        // send score to model
-        GD.Print("end_beat");
+        Input.NoteKeyPressed -= PressNote;
+
         if (success)
         {
             int full_score = note_scores.Sum();
-            // 4
-            /*switch (full_score / note_scores.Count)
-            {
-                case 1:
-                    temporary_label.Text = "OKAY";
-                    break;
-                case 2:
-                    temporary_label.Text = "GOOD";
-                    break;
-                case 3:
-                    temporary_label.Text = "PERFECT";
-                    break;
-            }*/
             OnEndNote?.Invoke(full_score, full_score / note_scores.Count);
         }
         else
         {
-            //temporary_label.Text = "MISS";
+            foreach (var note in notes)
+            {
+                note.Hide();
+            }
             OnEndNote?.Invoke(0, 0);
         }
-        OnEndNote = null;
-        QueueFree();
+        //OnEndNote = null;
+        ready = false;
+        //QueueFree();
     }
 
     public void EnterCollider(Area2D area)
     {
         if (!ready) return;
-
-        GD.Print("enter");
 
         current_score += 1;
     }
@@ -131,16 +140,16 @@ public partial class Beat : Node2D
     {
         if (!ready) return;
 
-        GD.Print("exit");
         current_score -= 1;
-        if (current_score < 0)
+        if (current_score < 0 && current_note_indexes.Count > 0)
         {
-            EndBeat(false);
+            EndHit(false);
         }
     }
 }
-public class BeatValues(int[] _note_indexes, Vector2 _position)
+public class BeatValues(int[] _note_lengths, Vector2 _position)
 {
-    public readonly int[] note_indexes = _note_indexes;
+
+    public readonly int[] note_lengths = _note_lengths; //0 or null == no note, 1 == hit, longer means held
     public readonly Vector2 position = _position;
 }

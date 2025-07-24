@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://wnce1id37nvw"
-path="res://.godot/imported/left_arrow.png-672740f5e60f4be6fe85931236547b8f.ctex"
+uid="uid://drlohf3phm75s"
+path="res://.godot/imported/up_held.png-6a52ce0a7c84cf69e0ab6273a8a28a37.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://sprites/left_arrow.png"
-dest_files=["res://.godot/imported/left_arrow.png-672740f5e60f4be6fe85931236547b8f.ctex"]
+source_file="res://sprites/up_held.png"
+dest_files=["res://.godot/imported/up_held.png-6a52ce0a7c84cf69e0ab6273a8a28a37.ctex"]
 
 [params]
 
@@ -31,4 +31,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=1
+detect_3d/compress_to=0

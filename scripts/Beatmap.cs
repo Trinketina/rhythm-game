@@ -1,15 +1,18 @@
 using Godot;
 using Godot.Collections;
+using System.Collections.Generic;
 
 public partial class Beatmap : Node2D
 {
-    [Signal()] public delegate void BeatEndedEventHandler(int score, int hit_value);
-
+    [Signal()] public delegate void HitEndedEventHandler(int score_multiplier, int hit_value);
+    [Signal()] public delegate void HoldStartedEventHandler(int index);
+    [Signal()] public delegate void HoldEndedEventHandler(int index);
 
     [Export] float fall_rate;
     [Export] PackedScene beat;
 
     bool running = false;
+
 
     [ExportGroup("temporary")]
     [Export] Vector2[] default_beat_positions;
@@ -18,6 +21,7 @@ public partial class Beatmap : Node2D
     public override void _Ready()
     {
         InitDefaultBeats();
+
         base._Ready();
     }
 
@@ -45,15 +49,30 @@ public partial class Beatmap : Node2D
     }
     public void SpawnBeat(BeatValues beat_values)
     {
-        Beat beat_script = beat.Instantiate<Beat>();
-        AddChild(beat_script);
-        beat_script.StartBeat(beat_values);
+        Beat beat_node = beat.Instantiate<Beat>();
+        AddChild(beat_node);
+        beat_node.StartBeat(beat_values);
 
-        beat_script.OnEndNote += EndNote;
+
+        beat_node.OnEndNote += EndNote;
+        beat_node.OnStartHoldNote += StartHold;
+        beat_node.OnEndHoldNote += EndHold;
     }
-    private void EndNote(int score, int hit_value)
+
+    private void EndNote(int score_multiplier, int hit_value)
     {
-        EmitSignal(SignalName.BeatEnded);
+        EmitSignal(SignalName.HitEnded, score_multiplier, hit_value);
+    }
+
+    private void StartHold(int index)
+    {
+        GD.Print("start hold");
+        EmitSignal(SignalName.HoldStarted, index);
+    }
+    private void EndHold(int index)
+    {
+        GD.Print("end hold");
+        EmitSignal(SignalName.HoldEnded, index);
     }
 
     private void InitDefaultBeats()
