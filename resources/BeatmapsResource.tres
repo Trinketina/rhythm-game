@@ -1,0 +1,6 @@
+[gd_resource type="Resource" load_steps=2 format=3 uid="uid://cnqauv46vuoy3"]
+
+[ext_resource type="Script" uid="uid://dorrd4esdbn0o" path="res://scripts/Beatmaps.cs" id="1_jfve6"]
+
+[resource]
+script = ExtResource("1_jfve6")

@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public partial class SongElement : Node
+public partial class SongElement : Control
 {
     [Export] TextureRect song_art;
     [Export] RichTextLabel song_title;
@@ -14,5 +14,7 @@ public partial class SongElement : Node
         song_title.Text = title;
         song_artist.Text = artist;
         song_charter.Text = charter;
+
+        GD.Print("alive");
     }
 }

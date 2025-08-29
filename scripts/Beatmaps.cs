@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public partial class Beatmaps : Resource
 {
-    Dictionary<string, Data> BeatmapData = new();
+    public Dictionary<string, Data> BeatmapsData = new();
     //int[][] beats; //array of time positions, array of activated notes in each beat
 
 
@@ -11,9 +11,8 @@ public partial class Beatmaps : Resource
     {
         public readonly Dictionary<string, string> song_data;
         public readonly Image song_art;
-
         public readonly AudioStream song_audio;
-        public readonly VideoStream song_video; //can be null
+        public readonly VideoStream song_video;
 
         public readonly string chart_data; //TODO:: separate by difficulty and such
 
@@ -31,7 +30,6 @@ public partial class Beatmaps : Resource
         {
             song_data = _song_data;
             song_art = _song_art;
-
             song_audio = _song_audio;
 
             chart_data = _chart_data;

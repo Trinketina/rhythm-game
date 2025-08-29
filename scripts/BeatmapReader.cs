@@ -1,4 +1,5 @@
 using Godot;
+using System;
 using System.Collections.Generic;
 
 
@@ -11,7 +12,8 @@ public partial class BeatmapReader : Node
 
     public override void _Ready()
     {
-        ImportZipBeatmap("C:\\Users\\krist\\Downloads\\Jamie Paige - BIRDBRAIN (w／OK Glass) (Downbad).zip");
+        //ImportZipBeatmap("C:\\Users\\krist\\Downloads\\Jamie Paige - BIRDBRAIN (w／OK Glass) (Downbad).zip");
+        ImportSong("user://beatmaps/Jamie Paige - BIRDBRAIN (w／OK Glass) (Downbad)/");
     }
     #region import
     public void ImportZipBeatmap(string zip_file_path)
@@ -39,12 +41,6 @@ public partial class BeatmapReader : Node
 
         var files = reader.GetFiles();
 
-        Dictionary<string, string> song_data;
-        Image song_art;
-        AudioStream song_audio;
-        VideoStream song_video;
-        string chart_data;
-
         foreach (var filepath in files) 
         {
             if (filepath.EndsWith("/"))
@@ -58,9 +54,36 @@ public partial class BeatmapReader : Node
             var buffer = reader.ReadFile(filepath);
             file.StoreBuffer(buffer);
 
+        }
+
+        string song_filepath = directory.GetCurrentDir().PathJoin(files[0]).GetBaseDir();
+        GD.Print(song_filepath);
+        ImportSong(song_filepath);
+
+        
+
+        GD.Print("done_importing");
+    }
+    #endregion
+
+    public void ImportSong(string song_filepath)
+    {
+        DirAccess directory = DirAccess.Open(song_filepath);
+        var files = directory.GetFiles();
+
+        string song_name = null;
+        Dictionary<string, string> song_data = null;
+        Image song_art = null;
+        AudioStream song_audio = null;
+        VideoStream song_video = null;
+        string chart_data = null;
+
+        foreach (var filepath in files)
+        {
             if (filepath.Contains("song.ini"))
             {
-                string[] data_text = file.GetAsText().Split("\n");
+                var file = FileAccess.Open(directory.GetCurrentDir().PathJoin(filepath), FileAccess.ModeFlags.Read);
+                string[] data_text = file.GetAsText(true).Split("\n");
                 song_data = new();
                 foreach (var line in data_text)
                 {
@@ -68,81 +91,59 @@ public partial class BeatmapReader : Node
                     string[] key_value = line.Split("=");
                     song_data.Add(key_value[0].Trim(), key_value[1].Trim());
                 }
+                song_name = song_data["name"];
             }
             else if (filepath.Contains("song"))
             {
                 song_audio = new();
-                song_audio = AudioStreamOggVorbis.LoadFromBuffer(buffer);
+                //song_audio = AudioStreamOggVorbis.LoadFromFile(directory.GetCurrentDir().PathJoin(filepath));
             }
             else if (filepath.Contains("video"))
             {
                 song_video = new();
-                song_video.File = filepath;
+                song_video.File = directory.GetCurrentDir().PathJoin(filepath);
             }
             else if (filepath.Contains("album"))
             {
                 song_art = new();
-                song_art.Load(filepath);
+                GD.Print(song_art.Load(directory.GetCurrentDir().PathJoin(filepath)));
+                song_art.Compress();
             }
             else if (filepath.Contains(".chart"))
             {
+                var file = FileAccess.Open(directory.GetCurrentDir().PathJoin(filepath), FileAccess.ModeFlags.Read);
                 chart_data = file.GetAsText();
             }
-        }
-        GD.Print("done_importing");
-        AddSongToList(directory.GetCurrentDir().PathJoin(files[0].Substring(0, files[0].LastIndexOf("/"))));
-    }
-    #endregion
-
-    public void InitializeSongs()
-    {
-
-    }
-    public void AddSongToList(string song_dir)
-    {
-        DirAccess dir = DirAccess.Open(song_dir);
-        var files = dir.GetFiles();
-        string art_filepath = null, data_filepath = null;
-        foreach (var filepath in files)
+        }        
+        if (song_name == null || /*song_audio == null ||*/ chart_data == null)
         {
-            if (data_filepath != null && art_filepath != null)
-            {
-                break;
-            }
-            if (filepath.Contains("album") && !filepath.Contains("import"))
-            {
-                art_filepath = filepath; continue;
-            }
-            if (filepath.Contains("song.ini"))
-            {
-                data_filepath = filepath; continue;
-            }
-        }
-        if (art_filepath.Equals(null) || data_filepath.Equals(null))
-        {
-            GD.PrintErr("failed to find song information");
+            GD.PrintErr("failed to import song");
             return;
         }
-        GD.Print(dir.GetCurrentDir().PathJoin(art_filepath));
-        //Image art_image = Image.LoadFromFile(dir.GetCurrentDir().PathJoin(art_filepath));
-        Image art_image = new();
-        art_image.Load(art_filepath);
-
-        /*FileAccess song_data_file = FileAccess.Open(dir.GetCurrentDir().PathJoin(data_filepath), FileAccess.ModeFlags.Read);
-        string[] data_text = song_data_file.GetAsText().Split("\n");
-        Dictionary<string, string> song_data = new();
-        foreach (var line in data_text)
+        if (song_video == null)
         {
-            if (!line.Contains("=")) { continue; }
-            string[] key_value = line.Split("=");
-            song_data.Add(key_value[0].Trim(), key_value[1].Trim());
-        }*/
-        string name = song_data["name"];
-        string artist = song_data["artist"];
-        string charter = song_data["charter"];
+            Beatmaps.Data data = new(song_data, song_art, song_audio, chart_data);
+            beatmaps.BeatmapsData.Add(song_name, data);
+        }
+        else
+        {
+            Beatmaps.Data data = new(song_data, song_art, song_audio, song_video, chart_data);
+            beatmaps.BeatmapsData.Add(song_name, data);
+        }
+        AddSongToList(song_name);
+    }
+    public void AddSongToList(string song_name)
+    {
+        var beatmap_data = beatmaps.BeatmapsData[song_name];
+
+        string name = beatmap_data.song_data["name"];
+        string artist = beatmap_data.song_data["artist"];
+        string charter = beatmap_data.song_data["charter"];
 
 
         SongElement song = song_element.Instantiate<SongElement>();
-        song.Initialize(art_image, name, artist, charter);
+        AddChild(song);
+        song.Initialize(beatmap_data.song_art, name, artist, charter);
+        //song.Position = Vector2.Zero;
     }
 }
