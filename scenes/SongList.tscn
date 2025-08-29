@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3 uid="uid://wp1lp08hq0sa"]
+
+[ext_resource type="Script" uid="uid://by473gt0l6bml" path="res://scripts/BeatmapReader.cs" id="1_lx8cy"]
+[ext_resource type="PackedScene" uid="uid://b2s3tp8c7n0eo" path="res://scenes/Song.tscn" id="2_2jjbh"]
+
+[node name="SongList" type="Node2D"]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Control" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Node2D" type="Node2D" parent="."]
+script = ExtResource("1_lx8cy")
+song_element = ExtResource("2_2jjbh")

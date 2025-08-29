@@ -19,7 +19,7 @@ public partial class Beat : Node2D
     List<int> current_note_indexes;
     List<int> held_note_indexes;
 
-    Beatmap beatmap;
+    BeatmapHandler beatmap;
 
     public override void _Ready()
     {
@@ -34,7 +34,7 @@ public partial class Beat : Node2D
         StartBeat(TEMP_note_indexes.ToArray());*/
         base._Ready();
     }
-    public void StartBeat(BeatValues beat, Beatmap _beatmap)
+    public void StartBeat(BeatValues beat, BeatmapHandler _beatmap)
     {
         beatmap = _beatmap;
         //current_note_indexes = beat.note_indexes.ToList();

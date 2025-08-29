@@ -2,7 +2,7 @@ using Godot;
 using Godot.Collections;
 using System.Collections.Generic;
 
-public partial class Beatmap : Node2D
+public partial class BeatmapHandler : Node2D
 {
     [Signal()] public delegate void HitEndedEventHandler(int score_multiplier, int hit_value);
     [Signal()] public delegate void HoldStartedEventHandler(int index, Vector2 tail_global_position);

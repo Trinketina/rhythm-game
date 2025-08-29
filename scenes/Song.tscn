@@ -1,0 +1,80 @@
+[gd_scene load_steps=3 format=3 uid="uid://b2s3tp8c7n0eo"]
+
+[ext_resource type="Texture2D" uid="uid://ggdjlntn6qyx" path="res://icon.svg" id="1_mbqs6"]
+[ext_resource type="Script" uid="uid://dfujyl0e2jiue" path="res://scripts/SongElement.cs" id="1_tlxyw"]
+
+[node name="Song" type="Control" node_paths=PackedStringArray("song_art", "song_title", "song_artist", "song_charter")]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_tlxyw")
+song_art = NodePath("AspectRatioContainer/Panel/Album Art")
+song_title = NodePath("AspectRatioContainer/Panel/Song Name")
+song_artist = NodePath("AspectRatioContainer/Panel/Artist")
+song_charter = NodePath("AspectRatioContainer/Panel/Beatmap Charter")
+
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="."]
+clip_contents = true
+layout_mode = 0
+offset_right = 350.0
+offset_bottom = 100.0
+stretch_mode = 3
+metadata/_edit_use_anchors_ = true
+
+[node name="Panel" type="Panel" parent="AspectRatioContainer"]
+layout_mode = 2
+
+[node name="Album Art" type="TextureRect" parent="AspectRatioContainer/Panel"]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -40.565
+offset_right = 40.0
+offset_bottom = -0.565018
+grow_vertical = 2
+scale = Vector2(2, 2)
+pivot_offset = Vector2(-10, 0)
+texture = ExtResource("1_mbqs6")
+expand_mode = 1
+
+[node name="Song Name" type="RichTextLabel" parent="AspectRatioContainer/Panel"]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 99.0
+offset_top = -40.7075
+offset_right = 285.0
+offset_bottom = -9.7075
+grow_vertical = 2
+theme_override_font_sizes/normal_font_size = 21
+text = "Song Name"
+scroll_active = false
+autowrap_mode = 0
+vertical_alignment = 1
+
+[node name="Artist" type="RichTextLabel" parent="AspectRatioContainer/Panel"]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 99.0
+offset_top = -13.565
+offset_right = 215.0
+offset_bottom = 13.435
+grow_vertical = 2
+text = "Artist"
+vertical_alignment = 1
+
+[node name="Beatmap Charter" type="RichTextLabel" parent="AspectRatioContainer/Panel"]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 99.0
+offset_top = 13.0
+offset_right = 215.0
+offset_bottom = 40.0
+grow_vertical = 2
+text = "Charter"
+vertical_alignment = 1

@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://vi7n7at13bdx"]
 
-[ext_resource type="Script" uid="uid://di2m54xymqfm6" path="res://scripts/Beatmap.cs" id="1_6link"]
+[ext_resource type="Script" uid="uid://di2m54xymqfm6" path="res://scripts/BeatmapHandler.cs" id="1_6link"]
 [ext_resource type="PackedScene" uid="uid://cuyu2sio30wba" path="res://scenes/Beat.tscn" id="2_2efdc"]
 
 [node name="Beatmap" type="Node2D"]
