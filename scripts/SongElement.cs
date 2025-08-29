@@ -11,9 +11,18 @@ public partial class SongElement : Control
     public void Initialize(Image art, string title, string artist, string charter)
     {
         song_art.Texture = ImageTexture.CreateFromImage(art);
-        song_title.Text = title;
-        song_artist.Text = artist;
-        song_charter.Text = charter;
+
+        string new_title = title.Replace("<", "[");
+        new_title = new_title.Replace(">", "]");
+        song_title.Text = new_title;
+
+        string new_artist = artist.Replace("<", "[");
+        new_artist = new_artist.Replace(">", "]");
+        song_artist.Text = new_artist;
+
+        string new_charter = charter.Replace("<", "[");
+        new_charter = new_charter.Replace(">", "]");
+        song_charter.Text = new_charter;
 
         GD.Print("alive");
     }
