@@ -107,7 +107,6 @@ public partial class BeatmapReader : Node
             {
                 song_art = new();
                 GD.Print(song_art.Load(directory.GetCurrentDir().PathJoin(filepath)));
-                song_art.Compress();
             }
             else if (filepath.Contains(".chart"))
             {
