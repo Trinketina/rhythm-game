@@ -19,7 +19,7 @@ public partial class Beat : Node2D
     List<int> current_note_indexes;
     List<int> held_note_indexes;
 
-    BeatmapHandler beatmap;
+    BeatmapGameplay beatmap;
 
     public override void _Ready()
     {
@@ -34,7 +34,7 @@ public partial class Beat : Node2D
         StartBeat(TEMP_note_indexes.ToArray());*/
         base._Ready();
     }
-    public void StartBeat(BeatValues beat, BeatmapHandler _beatmap)
+    public void StartBeat(BeatValues beat, BeatmapGameplay _beatmap)
     {
         beatmap = _beatmap;
         //current_note_indexes = beat.note_indexes.ToList();
@@ -44,7 +44,7 @@ public partial class Beat : Node2D
 
         for (int i = 0; i < beat.note_lengths.Length; i++)
         {
-            if (beat.note_lengths[i] > 0)
+            if (beat.note_lengths[i] > 0 && notes.Length > i)
             {
                 notes[i].EnableNote(i, beat.note_lengths[i]);
                 current_note_indexes.Add(i);
@@ -56,6 +56,10 @@ public partial class Beat : Node2D
                 }
             }
             
+        }
+        if (current_note_indexes.Count == 0)
+        {
+            QueueFree();
         }
         note_scores = new();
 
@@ -140,6 +144,7 @@ public partial class Beat : Node2D
         }
         //OnEndNote = null;
         ready = false;
+        //await ToSignal(GetTree().CreateTimer(.5d), "timeout");
         //QueueFree();
     }
 

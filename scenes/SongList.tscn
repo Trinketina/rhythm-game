@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://wp1lp08hq0sa"]
+[gd_scene load_steps=5 format=3 uid="uid://wp1lp08hq0sa"]
 
-[ext_resource type="Script" uid="uid://by473gt0l6bml" path="res://scripts/BeatmapReader.cs" id="1_lx8cy"]
+[ext_resource type="Script" uid="uid://by473gt0l6bml" path="res://scripts/BeatmapParser.cs" id="1_lx8cy"]
 [ext_resource type="PackedScene" uid="uid://b2s3tp8c7n0eo" path="res://scenes/Song.tscn" id="2_2jjbh"]
 [ext_resource type="Resource" uid="uid://cnqauv46vuoy3" path="res://resources/BeatmapsResource.tres" id="2_ncpj7"]
+[ext_resource type="PackedScene" uid="uid://bi2e8a13wmmvj" path="res://scenes/RhythmGameplay.tscn" id="4_gpniu"]
 
 [node name="SongList" type="Node2D"]
 
@@ -32,6 +33,7 @@ script = ExtResource("1_lx8cy")
 beatmaps_resource = ExtResource("2_ncpj7")
 song_element = ExtResource("2_2jjbh")
 audio_player = NodePath("../../../AudioStreamPlayer")
+gameplay_scene = ExtResource("4_gpniu")
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 volume_db = -20.239

@@ -51,7 +51,7 @@ public partial class HitVisualizers : Node
         {
             foreach (var held_index in currently_holding)
             {
-                hold_sprites[held_index].Position += Vector2.Down * (100 * (float)delta / hold_sprites[held_index].GlobalScale.Y);
+                hold_sprites[held_index].Position += Vector2.Down * (250 * (float)delta / hold_sprites[held_index].GlobalScale.Y);
             }
         }
         base._Process(delta);

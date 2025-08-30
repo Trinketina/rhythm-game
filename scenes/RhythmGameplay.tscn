@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://bi2e8a13wmmvj"]
+[gd_scene load_steps=17 format=3 uid="uid://bi2e8a13wmmvj"]
 
 [ext_resource type="Script" uid="uid://csv58cfy2u63q" path="res://scripts/Input.cs" id="1_ktx6y"]
 [ext_resource type="PackedScene" uid="uid://detehmyjkaqwv" path="res://scenes/Arrow.tscn" id="2_ld010"]
@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://vi7n7at13bdx" path="res://scenes/Beatmap.tscn" id="6_ld010"]
 [ext_resource type="Script" uid="uid://teev7iq6w8h1" path="res://scripts/TempLabel.cs" id="6_ohwo4"]
 [ext_resource type="Texture2D" uid="uid://yeo2i6iemwau" path="res://sprites/right_arrow_spritesheet.png" id="6_qcsyk"]
+[ext_resource type="Resource" uid="uid://cnqauv46vuoy3" path="res://resources/BeatmapsResource.tres" id="12_a8d5y"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_y4w8d"]
 size = Vector2(300, 8)
@@ -298,7 +299,8 @@ frame = 2
 position = Vector2(0, -648)
 
 [node name="Beatmap" parent="Arrows/Beatmap Holder" instance=ExtResource("6_ld010")]
-fall_rate = 100.0
+fall_rate = 250.0
+beatmaps_resource = ExtResource("12_a8d5y")
 
 [connection signal="Hit" from="Arrows/Beatmap Holder/Beatmap" to="Arrows/Keyhit Visualizers" method="OnHitNote"]
 [connection signal="HitEnded" from="Arrows/Beatmap Holder/Beatmap" to="Control" method="OnBeatmapHitEnded"]

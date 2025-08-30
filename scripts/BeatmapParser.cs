@@ -4,19 +4,21 @@ using System.Collections.Generic;
 using System.Linq;
 
 
-public partial class BeatmapReader : Node
+public partial class BeatmapParser : Node
 {
     [Export] Beatmaps beatmaps_resource;
     [Export] PackedScene song_element;
 
     [ExportGroup("Temp")]
     [Export] AudioStreamPlayer audio_player;
+    [Export] PackedScene gameplay_scene;
     string beatmaps_directory = "user://beatmaps";
     FileAccess current_file;
+    private static readonly int[] empty_beat_value = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
     public override void _Ready()
     {
-        ImportZipBeatmap("C:\\Users\\krist\\Downloads\\Kessoku Band - That Band (あのバンド) (HaloMillennium).zip");
+        //ImportZipBeatmap("C:\\Users\\krist\\Downloads\\Kessoku Band - That Band (あのバンド) (HaloMillennium).zip");
         InitializeCurrentBeatmaps();
     }
     #region import
@@ -66,7 +68,7 @@ public partial class BeatmapReader : Node
     }
     #endregion
 
-    public void InitializeCurrentBeatmaps()
+    public async void InitializeCurrentBeatmaps()
     {
         DirAccess directory = DirAccess.Open(beatmaps_directory);
         var dirs = directory.GetDirectories();
@@ -77,8 +79,15 @@ public partial class BeatmapReader : Node
 
         //TEMP:: plays a random song on startup
         Random rand = new();
-        audio_player.Stream = beatmaps_resource.BeatmapsData.ElementAt(rand.Next(beatmaps_resource.BeatmapsData.Count)).Value.song_audio;
+        int song_at = rand.Next(beatmaps_resource.BeatmapsData.Count);
+        Beatmaps.Data song = beatmaps_resource.BeatmapsData.ElementAt(song_at).Value;
+        audio_player.Stream = song.song_audio;
         audio_player.Play();
+
+        beatmaps_resource.SelectedSong = song.song_data["name"];
+        //TEMP:: after a few seconds jumps to the gameplay scene, for testing
+        await ToSignal(GetTree().CreateTimer(2), "timeout");
+        GetTree().ChangeSceneToPacked(gameplay_scene);
     }
     public void InitializeSong(string song_filepath)
     {
@@ -90,7 +99,7 @@ public partial class BeatmapReader : Node
         Image song_art = null;
         AudioStream song_audio = null;
         VideoStream song_video = null;
-        string chart_data = null;
+        string raw_chart_text = null;
 
         foreach (var filepath in files)
         {
@@ -155,16 +164,17 @@ public partial class BeatmapReader : Node
             else if (filepath.Contains(".chart"))
             {
                 var file = FileAccess.Open(directory.GetCurrentDir().PathJoin(filepath), FileAccess.ModeFlags.Read);
-                chart_data = file.GetAsText();
+                raw_chart_text = file.GetAsText();
             }
         }        
-        if (song_name == null || song_audio == null /*|| chart_data == null*/)
+        if (song_name == null || song_audio == null || raw_chart_text == null)
         {
             
             //GD.Print(song_name + song_audio + chart_data);
             GD.PrintErr("failed to import song");
             return;
         }
+        var chart_data = ParseChart(raw_chart_text);
         if (song_video == null)
         {
             Beatmaps.Data data = new(song_data, song_art, song_audio, chart_data);
@@ -176,6 +186,52 @@ public partial class BeatmapReader : Node
             beatmaps_resource.BeatmapsData.Add(song_name, data);
         }
         AddSongToList(song_name);
+    }
+    public static Dictionary<int, int[]> ParseChart(string raw_chart_text)
+    {
+        bool note_section = false;
+        Dictionary<int, int[]> beats_dictionary = new(); //position in ticks | array of note lengths for their positions
+
+        foreach (var line in raw_chart_text.Split("\n"))
+        {
+            if (line.Contains("[ExpertSingle]"))
+            {
+                note_section = true;
+                continue;
+            }
+            if (note_section)
+            {
+                if (line.Trim().StartsWith("[")) //beatmap parsed
+                {
+                    break;
+                }
+                if (line.Contains(" = N "))
+                {
+                    string[] key_value = line.Split(" = N ");
+                    int tick = int.Parse(key_value[0]);
+                    string[] note_values = key_value[1].Trim().Split(" ");
+                    int note_position = int.Parse(note_values[0]);
+                    int note_length = int.Parse(note_values[1]);
+                    if (!beats_dictionary.ContainsKey(tick))
+                    {
+                        int[] blank_values = new int[empty_beat_value.Length];
+                        empty_beat_value.CopyTo(blank_values,0);
+                        beats_dictionary.Add(tick, blank_values);
+                    }
+                    if (note_length == 0) //add to beatmap
+                    {
+                        beats_dictionary[tick][note_position] = 1;
+                    }
+                    else
+                    {
+                        beats_dictionary[tick][note_position] = note_length;
+                    }
+                    GD.Print(tick + " =n " + note_position + " " + note_length );
+                }
+            }
+        }
+        GD.Print(beats_dictionary.ToString());
+        return beats_dictionary;
     }
     public void AddSongToList(string song_name)
     {
