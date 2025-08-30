@@ -80,11 +80,11 @@ public partial class BeatmapParser : Node
         //TEMP:: plays a random song on startup
         Random rand = new();
         int song_at = rand.Next(beatmaps_resource.BeatmapsData.Count);
-        Beatmaps.Data song = beatmaps_resource.BeatmapsData.ElementAt(song_at).Value;
+        Beatmaps.Data song = beatmaps_resource.BeatmapsData.ElementAt(2).Value;
         audio_player.Stream = song.song_audio;
         audio_player.Play();
 
-        beatmaps_resource.SelectedSong = song.song_data["name"];
+        beatmaps_resource.SelectedSong = song;
         //TEMP:: after a few seconds jumps to the gameplay scene, for testing
         await ToSignal(GetTree().CreateTimer(2), "timeout");
         GetTree().ChangeSceneToPacked(gameplay_scene);
@@ -174,36 +174,77 @@ public partial class BeatmapParser : Node
             GD.PrintErr("failed to import song");
             return;
         }
-        var chart_data = ParseChart(raw_chart_text);
+        Dictionary<int, int[]> chart_data;
+        Dictionary<int, float> bpm_data;
+        ParseChart(raw_chart_text, out chart_data, out bpm_data);
+
         if (song_video == null)
         {
-            Beatmaps.Data data = new(song_data, song_art, song_audio, chart_data);
+            Beatmaps.Data data = new(song_data, song_art, song_audio, chart_data, bpm_data);
             beatmaps_resource.BeatmapsData.Add(song_name, data);
         }
         else
         {
-            Beatmaps.Data data = new(song_data, song_art, song_audio, song_video, chart_data);
+            Beatmaps.Data data = new(song_data, song_art, song_audio, song_video, chart_data, bpm_data);
             beatmaps_resource.BeatmapsData.Add(song_name, data);
         }
         AddSongToList(song_name);
     }
-    public static Dictionary<int, int[]> ParseChart(string raw_chart_text)
+    public static void ParseChart(string raw_chart_text, out Dictionary<int, int[]> note_data, out Dictionary<int,float> bpm_data)
     {
+        bool sync_section = false;
         bool note_section = false;
-        Dictionary<int, int[]> beats_dictionary = new(); //position in ticks | array of note lengths for their positions
-
+        Dictionary<int, int[]> notes_dictionary = new(); //position in ticks | array of note lengths for their positions
+        Dictionary<int, float> bpm_dictionary = new(); // position in ticks | current bpm as of that tick pos
         foreach (var line in raw_chart_text.Split("\n"))
         {
-            if (line.Contains("[ExpertSingle]"))
+            if (line.Contains("[SyncTrack]") && bpm_dictionary.Count == 0)
             {
+                sync_section = true;
+                note_section = false;
+                continue;
+            }
+            if (line.Contains("[ExpertKeyboard]") && notes_dictionary.Count == 0)
+            {
+                sync_section = false;
                 note_section = true;
                 continue;
+            }
+            if (sync_section)
+            {
+                if (line.Trim().StartsWith("[")) //bpm parsed
+                {
+                    if (notes_dictionary.Count == 0)
+                    {
+                        sync_section = false;
+                        continue;
+                    }
+                    break;
+                    //leave if both are finished (should not happen but just in case)
+                }
+                if (line.Contains(" = B "))
+                {
+                    string[] key_value = line.Split(" = B ");
+                    int tick = int.Parse(key_value[0]);
+                    float bpm = float.Parse(key_value[1]) / 1000;
+
+                    if (!bpm_dictionary.ContainsKey(tick))
+                    {
+                        bpm_dictionary.Add(tick, bpm);
+                    }
+                }
             }
             if (note_section)
             {
                 if (line.Trim().StartsWith("[")) //beatmap parsed
                 {
+                    if (bpm_dictionary.Count == 0)
+                    {
+                        note_section = false;
+                        continue;
+                    }
                     break;
+                    //leave if both are finished (should be the case since SyncTrack is supposed to be above the charts)
                 }
                 if (line.Contains(" = N "))
                 {
@@ -212,26 +253,31 @@ public partial class BeatmapParser : Node
                     string[] note_values = key_value[1].Trim().Split(" ");
                     int note_position = int.Parse(note_values[0]);
                     int note_length = int.Parse(note_values[1]);
-                    if (!beats_dictionary.ContainsKey(tick))
+
+                    if (note_position >= empty_beat_value.Length) continue;
+
+                    if (!notes_dictionary.ContainsKey(tick))
                     {
                         int[] blank_values = new int[empty_beat_value.Length];
-                        empty_beat_value.CopyTo(blank_values,0);
-                        beats_dictionary.Add(tick, blank_values);
+                        empty_beat_value.CopyTo(blank_values, 0);
+                        notes_dictionary.Add(tick, blank_values);
                     }
                     if (note_length == 0) //add to beatmap
                     {
-                        beats_dictionary[tick][note_position] = 1;
+                        notes_dictionary[tick][note_position] = 1;
                     }
                     else
                     {
-                        beats_dictionary[tick][note_position] = note_length;
+                        notes_dictionary[tick][note_position] = note_length;
                     }
-                    GD.Print(tick + " =n " + note_position + " " + note_length );
                 }
             }
         }
-        GD.Print(beats_dictionary.ToString());
-        return beats_dictionary;
+        GD.Print(notes_dictionary.Count());
+        note_data = notes_dictionary;
+        bpm_data = bpm_dictionary;
+
+        //GD.Print(beats_dictionary.ToString());
     }
     public void AddSongToList(string song_name)
     {

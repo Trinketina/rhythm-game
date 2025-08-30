@@ -46,7 +46,7 @@ public partial class Beat : Node2D
         {
             if (beat.note_lengths[i] > 0 && notes.Length > i)
             {
-                notes[i].EnableNote(i, beat.note_lengths[i]);
+                notes[i].EnableNote(i, beat.note_lengths[i] / Scale.Length());
                 current_note_indexes.Add(i);
 
                 if (beat.note_lengths[i] > 1)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://bi2e8a13wmmvj"]
+[gd_scene load_steps=18 format=3 uid="uid://bi2e8a13wmmvj"]
 
 [ext_resource type="Script" uid="uid://csv58cfy2u63q" path="res://scripts/Input.cs" id="1_ktx6y"]
 [ext_resource type="PackedScene" uid="uid://detehmyjkaqwv" path="res://scenes/Arrow.tscn" id="2_ld010"]
@@ -12,6 +12,7 @@
 [ext_resource type="Script" uid="uid://teev7iq6w8h1" path="res://scripts/TempLabel.cs" id="6_ohwo4"]
 [ext_resource type="Texture2D" uid="uid://yeo2i6iemwau" path="res://sprites/right_arrow_spritesheet.png" id="6_qcsyk"]
 [ext_resource type="Resource" uid="uid://cnqauv46vuoy3" path="res://resources/BeatmapsResource.tres" id="12_a8d5y"]
+[ext_resource type="Script" uid="uid://d4ha0sysi6b6n" path="res://scripts/Conductor.cs" id="13_opj7l"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_y4w8d"]
 size = Vector2(300, 8)
@@ -164,12 +165,13 @@ scale = Vector2(2.5, 2.5)
 position = Vector2(0, -3.19998)
 shape = SubResource("RectangleShape2D_st34r")
 
-[node name="Keyhit Visualizers" type="Node2D" parent="Arrows" node_paths=PackedStringArray("visualizer_sprites", "hold_sprites")]
+[node name="Keyhit Visualizers" type="Node2D" parent="Arrows" node_paths=PackedStringArray("visualizer_sprites", "hold_sprites", "conductor")]
 position = Vector2(1, -87)
 scale = Vector2(2.4, 2.4)
 script = ExtResource("6_a8d5y")
 visualizer_sprites = [NodePath("Key0"), NodePath("Key1"), NodePath("Key2"), NodePath("Key3")]
 hold_sprites = [NodePath("Key0/Mask/Hold"), NodePath("Key1/Mask/Hold"), NodePath("Key2/Mask/Hold"), NodePath("Key3/Mask/Hold")]
+conductor = NodePath("../Conductor")
 
 [node name="Key0" type="Sprite2D" parent="Arrows/Keyhit Visualizers"]
 visible = false
@@ -296,10 +298,15 @@ hframes = 5
 frame = 2
 
 [node name="Beatmap Holder" type="Node2D" parent="Arrows"]
-position = Vector2(0, -648)
+position = Vector2(0, -87)
 
-[node name="Beatmap" parent="Arrows/Beatmap Holder" instance=ExtResource("6_ld010")]
-fall_rate = 250.0
+[node name="Beatmap" parent="Arrows/Beatmap Holder" node_paths=PackedStringArray("conductor") instance=ExtResource("6_ld010")]
+conductor = NodePath("../../Conductor")
+beatmaps_resource = ExtResource("12_a8d5y")
+
+[node name="Conductor" type="AudioStreamPlayer" parent="Arrows"]
+volume_db = -30.85
+script = ExtResource("13_opj7l")
 beatmaps_resource = ExtResource("12_a8d5y")
 
 [connection signal="Hit" from="Arrows/Beatmap Holder/Beatmap" to="Arrows/Keyhit Visualizers" method="OnHitNote"]

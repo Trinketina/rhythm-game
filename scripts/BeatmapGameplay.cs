@@ -1,6 +1,7 @@
 using Godot;
 using Godot.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 public partial class BeatmapGameplay : Node2D
 {
@@ -8,12 +9,13 @@ public partial class BeatmapGameplay : Node2D
     [Signal()] public delegate void HoldStartedEventHandler(int index, Vector2 tail_global_position);
     [Signal()] public delegate void HoldEndedEventHandler(int index, Vector2 global_position);
     [Signal()] public delegate void HitEventHandler(int index, Vector2 global_position);
-    [Export] float fall_rate;
+    //[Export] float fall_rate;
     [Export] PackedScene beat;
+    [Export] Conductor conductor;
     [Export] Beatmaps beatmaps_resource;
 
     bool running = false;
-
+    //double current_time = 0;
 
     [ExportGroup("temporary")]
     [Export] Vector2[] default_beat_positions;
@@ -22,7 +24,7 @@ public partial class BeatmapGameplay : Node2D
     public override void _Ready()
     {
         //InitDefaultBeats();
-        InitializeBeats(beatmaps_resource.BeatmapsData[beatmaps_resource.SelectedSong].chart_data);
+        InitializeBeats(beatmaps_resource.SelectedSong.chart_data);
         base._Ready();
     }
 
@@ -32,7 +34,10 @@ public partial class BeatmapGameplay : Node2D
         {
             //TODO:: tie to conductor to offset for audio latency
             //TODO:: add accessibility option for custom latency offsets
-            Position += Vector2.Down * (fall_rate * (float)delta);
+            //Position += Vector2.Down * (conductor.TicksToSeconds((float)delta) /** (float)delta*/);
+
+            //current_time += delta;
+            Position = Vector2.Down * (conductor.TimeToTicks(conductor.GetSongPlaytime()));
         } 
         base._Process(delta);
     }
@@ -43,13 +48,18 @@ public partial class BeatmapGameplay : Node2D
         foreach (var beat in beats)
         {
             BeatValues values = new(beat.Value, (Vector2.Up * beat.Key)); //NOT FINAL
-            //GD.Print(((Vector2.Up * beat.Key)).ToString());
-            //GD.Print(beat.Value.GetValue(0));
             SpawnBeat(values);
         }
 
         //TODO:: make a proper start sequence
+        Start();
+    }
+    private async void Start()
+    {
+        await ToSignal(GetTree().CreateTimer(3), "timeout");
         running = true;
+        //current_time = 0;
+        conductor.StartSong();
     }
     public void SpawnBeat(BeatValues beat_values)
     {
@@ -61,7 +71,6 @@ public partial class BeatmapGameplay : Node2D
         /*beat_node.OnEndNote += EndNote;
         beat_node.OnStartHoldNote += StartHold;
         beat_node.OnEndHoldNote += EndHold;*/
-        //GD.Print("spawn note");
     }
     public void HitNote(int index, Vector2 global_position)
     {

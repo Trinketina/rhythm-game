@@ -10,14 +10,14 @@ public partial class Note : Sprite2D
     int texture_width = 42;
 
     public Action<int> OnReleaseNote; //index, sends up to beat
-    public int length { get; private set; }
+    public float length { get; private set; }
 
     bool holding = false;
     public int press_score { get; private set; } = -1;
     public int held_score { get; private set; } = -1;
     int index = -1;
 
-    public void EnableNote(int note_index, int note_length)
+    public void EnableNote(int note_index, float note_length)
     {
         Show();
         length = note_length;

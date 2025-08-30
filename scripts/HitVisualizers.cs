@@ -5,6 +5,7 @@ public partial class HitVisualizers : Node
 {
     [Export] Sprite2D[] visualizer_sprites;
     [Export] Sprite2D[] hold_sprites;
+    [Export] Conductor conductor;
     [Export] float show_time = 1.3f;
 
     List<int> currently_holding = new();
@@ -51,7 +52,7 @@ public partial class HitVisualizers : Node
         {
             foreach (var held_index in currently_holding)
             {
-                hold_sprites[held_index].Position += Vector2.Down * (250 * (float)delta / hold_sprites[held_index].GlobalScale.Y);
+                hold_sprites[held_index].Position += Vector2.Down * (conductor.TimeToTicks(((float)delta) + conductor.GetCurrentAudioOffset())) / hold_sprites[held_index].GlobalScale.Y;
             }
         }
         base._Process(delta);

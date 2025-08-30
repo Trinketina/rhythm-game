@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="rhythm game test"
-run/main_scene="uid://bi2e8a13wmmvj"
+run/main_scene="uid://wp1lp08hq0sa"
 config/features=PackedStringArray("4.4", "C#", "GL Compatibility")
 config/icon="res://icon.svg"
 
@@ -26,7 +26,7 @@ project/assembly_name="DDR Clone"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/YouCanDoIt/plugin.cfg", "res://addons/midi_import/plugin.cfg")
+enabled=PackedStringArray("res://addons/YouCanDoIt/plugin.cfg")
 
 [importer_defaults]
 
