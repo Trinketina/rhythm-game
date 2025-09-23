@@ -13,7 +13,7 @@ config_version=5
 config/name="rhythm game test"
 run/main_scene="uid://wp1lp08hq0sa"
 config/features=PackedStringArray("4.4", "C#", "GL Compatibility")
-config/icon="res://icon.svg"
+boot_splash/image="uid://dtrby0rb78pvb"
 
 [display]
 

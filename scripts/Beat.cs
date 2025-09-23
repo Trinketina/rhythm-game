@@ -111,11 +111,13 @@ public partial class Beat : Node2D
     {
         Note note = notes[index];
         //OnEndNote?.Invoke(note.held_score, note.held_score);
-        beatmap.EndNote(note.held_score, note.held_score);
+        beatmap.EndNote(this, note.held_score, note.held_score);
         //OnEndHoldNote?.Invoke(index);
         beatmap.EndHold(index, note.GlobalPosition);
         notes[index].Hide();
         held_note_indexes.Remove(index);
+
+        notes[index].OnReleaseNote -= NoteReleased;
         //GD.Print("Released, score: " + note.held_score);
     }
 
@@ -131,7 +133,7 @@ public partial class Beat : Node2D
         {
             int full_score = note_scores.Sum();
             //OnEndNote?.Invoke(full_score, full_score / note_scores.Count);
-            beatmap.EndNote(full_score, full_score / note_scores.Count);
+            beatmap.EndNote(this, full_score, full_score / note_scores.Count);
         }
         else
         {
@@ -140,7 +142,7 @@ public partial class Beat : Node2D
                 note.Hide();
             }
             //OnEndNote?.Invoke(0, 0);
-            beatmap.EndNote(0,0);
+            beatmap.EndNote(this, 0,0);
         }
         //OnEndNote = null;
         ready = false;

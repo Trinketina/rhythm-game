@@ -1,7 +1,9 @@
 [gd_scene load_steps=3 format=3 uid="uid://b2s3tp8c7n0eo"]
 
-[ext_resource type="Texture2D" uid="uid://ggdjlntn6qyx" path="res://icon.svg" id="1_mbqs6"]
 [ext_resource type="Script" uid="uid://dfujyl0e2jiue" path="res://scripts/SongElement.cs" id="1_tlxyw"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_mbqs6"]
+load_path = "res://.godot/imported/icon.svg-218a8f2b3041327d8a5756f3a245f83b.ctex"
 
 [node name="Song" type="Control" node_paths=PackedStringArray("song_art", "song_title", "song_artist", "song_charter")]
 layout_mode = 3
@@ -37,7 +39,7 @@ offset_bottom = -0.565018
 grow_vertical = 2
 scale = Vector2(2, 2)
 pivot_offset = Vector2(-10, 0)
-texture = ExtResource("1_mbqs6")
+texture = SubResource("CompressedTexture2D_mbqs6")
 expand_mode = 1
 
 [node name="Song Name" type="RichTextLabel" parent="AspectRatioContainer/Panel"]

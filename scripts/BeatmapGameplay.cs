@@ -1,6 +1,9 @@
 using Godot;
-using Godot.Collections;
+using System.Buffers;
+
+//using Godot.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 public partial class BeatmapGameplay : Node2D
@@ -11,20 +14,24 @@ public partial class BeatmapGameplay : Node2D
     [Signal()] public delegate void HitEventHandler(int index, Vector2 global_position);
     //[Export] float fall_rate;
     [Export] PackedScene beat;
+    [Export] int beat_pool_size = 30;
     [Export] Conductor conductor;
     [Export] Beatmaps beatmaps_resource;
 
-    bool running = false;
-    //double current_time = 0;
-
     [ExportGroup("temporary")]
     [Export] Vector2[] default_beat_positions;
-    [Export] Array<int[]> default_beat_notes;
+    //[Export] Array<int[]> default_beat_notes;
+
+    Dictionary<int, int[]> beats;
+    List<int> beat_keys;
+    Beat[] beats_pool;
+    bool running = false;
 
     public override void _Ready()
     {
         //InitDefaultBeats();
         InitializeBeats(beatmaps_resource.SelectedSong.chart_data);
+        Start();
         base._Ready();
     }
 
@@ -41,27 +48,40 @@ public partial class BeatmapGameplay : Node2D
         } 
         base._Process(delta);
     }
-
-
-    public void InitializeBeats(System.Collections.Generic.Dictionary<int, int[]> beats)
-    {
-        foreach (var beat in beats)
-        {
-            BeatValues values = new(beat.Value, (Vector2.Up * beat.Key)); //NOT FINAL
-            SpawnBeat(values);
-        }
-
-        //TODO:: make a proper start sequence
-        Start();
-    }
     private async void Start()
     {
+
         await ToSignal(GetTree().CreateTimer(3), "timeout");
         running = true;
         //current_time = 0;
         conductor.StartSong();
     }
-    public void SpawnBeat(BeatValues beat_values)
+
+    #region Beat Handling
+    public void InitializeBeats(Dictionary<int, int[]> _beats)
+    {
+        beats = _beats;
+
+        beat_keys = beats.Keys.ToList();
+        beat_keys.Sort();
+
+        beats_pool = new Beat[beat_pool_size];
+
+        GD.Print("beat count:" + beats.Count);
+
+        for (int i = 0; i < beat_pool_size; i++)
+        {
+            BeatValues values = new(beats[beat_keys[i]], (Vector2.Up * beat_keys[i]));
+            beats_pool[i] = SpawnBeat(values);
+
+            beat_keys.Remove(i);
+        }
+        
+
+        //TODO:: make a proper start sequence
+        Start();
+    }
+    public Beat SpawnBeat(BeatValues beat_values)
     {
         Beat beat_node = beat.Instantiate<Beat>();
         AddChild(beat_node);
@@ -71,14 +91,23 @@ public partial class BeatmapGameplay : Node2D
         /*beat_node.OnEndNote += EndNote;
         beat_node.OnStartHoldNote += StartHold;
         beat_node.OnEndHoldNote += EndHold;*/
+
+        return beat_node;
     }
     public void HitNote(int index, Vector2 global_position)
     {
         EmitSignal(SignalName.Hit, index, global_position);
     }
-    public void EndNote(int score_multiplier, int hit_value)
+    public void EndNote(Beat beat, int score_multiplier, int hit_value)
     {
         EmitSignal(SignalName.HitEnded, score_multiplier, hit_value);
+
+        if (beat_keys.Count > 0)
+        {
+            BeatValues values = new(beats[beat_keys[0]], (Vector2.Up * beat_keys[0]));
+            beat.StartBeat(values, this);
+        }
+
     }
 
     public void StartHold(int index, Vector2 global_position)
@@ -92,14 +121,15 @@ public partial class BeatmapGameplay : Node2D
         EmitSignal(SignalName.HoldEnded, index, global_position);
     }
 
-    private void InitDefaultBeats()
+    /*private void InitDefaultBeats()
     {
         BeatValues[] default_beats = new BeatValues[default_beat_positions.Length];
-        for(int i = 0; i < default_beat_positions.Length; i++)
+        for (int i = 0; i < default_beat_positions.Length; i++)
         {
             default_beats[i] = new BeatValues(default_beat_notes[i], default_beat_positions[i]);
-            
+
         }
         //InitializeBeats(default_beats);
-    }
+    }*/
+    #endregion
 }
